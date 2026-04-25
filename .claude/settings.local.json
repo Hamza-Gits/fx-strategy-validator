@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"/c/Program Files/MetaTrader 5/MetaEditor64.exe\" /compile:\"C:\\\\Users\\\\hamza\\\\AppData\\\\Roaming\\\\MetaQuotes\\\\Terminal\\\\D0E8209F77C8CF37AD8BF550E51FF075\\\\MQL5\\\\Experts\\\\LondonBreakout_GBPUSD.mq5\" /log:\"C:\\\\Users\\\\hamza\\\\AppData\\\\Roaming\\\\MetaQuotes\\\\Terminal\\\\D0E8209F77C8CF37AD8BF550E51FF075\\\\MQL5\\\\Experts\\\\lb_compile.log\")",
+      "Bash(echo \"exit=$?\")",
+      "Bash(cp \"C:\\\\Users\\\\hamza\\\\AppData\\\\Roaming\\\\MetaQuotes\\\\Terminal\\\\D0E8209F77C8CF37AD8BF550E51FF075\\\\MQL5\\\\Experts\\\\LondonBreakout_GBPUSD.mq5\" \"C:\\\\Users\\\\hamza\\\\Downloads\\\\Ai projects\\\\CLAUDE MT5\\\\Script\\\\LondonBreakout_GBPUSD_v2_1.mq5\")",
+      "Bash(cp \"C:\\\\Users\\\\hamza\\\\AppData\\\\Roaming\\\\MetaQuotes\\\\Terminal\\\\D0E8209F77C8CF37AD8BF550E51FF075\\\\MQL5\\\\Experts\\\\LondonBreakout_GBPUSD.ex5\" \"C:\\\\Users\\\\hamza\\\\Downloads\\\\Ai projects\\\\CLAUDE MT5\\\\Script\\\\LondonBreakout_GBPUSD_v2_1.ex5\")",
+      "Read(//c/Users/hamza/Downloads/Ai projects/CLAUDE MT5/Script/**)",
+      "Bash(copy \"C:\\\\Users\\\\hamza\\\\Downloads\\\\Ai projects\\\\CLAUDE MT5\\\\Script\\\\LondonBreakout_GBPUSD_v2_1.mq5\" \"C:\\\\Users\\\\hamza\\\\AppData\\\\Roaming\\\\MetaQuotes\\\\Terminal\\\\D0E8209F77C8CF37AD8BF550E51FF075\\\\MQL5\\\\Experts\\\\LondonBreakout_GBPUSD.mq5\" /Y)",
+      "Bash(del \"C:\\\\Users\\\\hamza\\\\AppData\\\\Roaming\\\\MetaQuotes\\\\Terminal\\\\D0E8209F77C8CF37AD8BF550E51FF075\\\\MQL5\\\\Experts\\\\LondonBreakout_GBPUSD.ex5\")"
+    ]
+  }
+}

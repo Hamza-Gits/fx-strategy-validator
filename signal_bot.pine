@@ -1,0 +1,239 @@
+//@version=5
+// ── STRATEGY DECLARATION ──────────────────────────────────────────────────────
+// v6 — Weekly Trend Rider (optimized for weekly timeframe)
+// Recommended: apply to WEEKLY chart of mega-cap growth (AAPL, NVDA, TSLA, MSFT)
+strategy("Swing Signal Bot v6 — Weekly Trend Rider", overlay=true, initial_capital=10000, default_qty_type=strategy.percent_of_equity, default_qty_value=50, commission_type=strategy.commission.percent, commission_value=0.1, slippage=2, pyramiding=2, calc_on_every_tick=false, process_orders_on_close=true)
+
+// ── INPUTS ────────────────────────────────────────────────────────────────────
+// Trend (tuned for weekly: 10/30 weeks ≈ 2.5 / 7 months)
+emaFastLen  = input.int(10,   "EMA Fast",              minval=1,              group="Trend")
+emaSlowLen  = input.int(30,   "EMA Slow",              minval=1,              group="Trend")
+
+// RSI
+rsiLen      = input.int(14,   "RSI Period",            minval=1,              group="Momentum")
+rsiMin      = input.int(50,   "RSI Min for Buy",       minval=1, maxval=100,  group="Momentum")
+
+// MACD
+macdFast    = input.int(12,   "MACD Fast",             minval=1,              group="MACD")
+macdSlow    = input.int(26,   "MACD Slow",             minval=1,              group="MACD")
+macdSig     = input.int(9,    "MACD Signal",           minval=1,              group="MACD")
+
+// Volume
+useVol      = input.bool(true, "Volume Filter",                               group="Volume")
+volMAPeriod = input.int(10,   "Volume SMA Period",     minval=1,              group="Volume")
+volMult     = input.float(1.0,"Volume × SMA",          minval=0.5, step=0.1,  group="Volume")
+
+// Exits — Chandelier tuned for weekly (10-week lookback)
+atrLen             = input.int(10, "ATR Period",          minval=1,           group="Exit / Risk")
+chandelierMult     = input.float(3.0, "Chandelier × ATR", step=0.1,           group="Exit / Risk")
+chandelierLookback = input.int(10, "Highest-High Lookback", minval=1,         group="Exit / Risk")
+initStopMult       = input.float(2.0,"Initial Hard Stop × ATR", step=0.1,     group="Exit / Risk")
+useEmaExit         = input.bool(true,"Exit When EMA Fast < EMA Slow",         group="Exit / Risk")
+
+// Partial Profit Taking (pro technique)
+usePartialTP  = input.bool(true, "Take Partial Profit at 2R",                 group="Partial Profits")
+partialR      = input.float(2.0, "R-Multiple for Partial Exit", step=0.1,     group="Partial Profits")
+partialPct    = input.float(50.0,"% of Position to Close at Partial", minval=10, maxval=90, step=5, group="Partial Profits")
+
+// PYRAMIDING
+usePyramid  = input.bool(true, "Enable Pyramiding",                           group="Pyramiding")
+maxAdds     = input.int(2,    "Max Pyramid Entries",   minval=1, maxval=3,    group="Pyramiding")
+addDistATR  = input.float(1.0,"Min ATR Distance Between Adds", step=0.1,      group="Pyramiding")
+
+// REGIME FILTER (tuned for weekly: 40-week SMA ≈ 200-day SMA)
+useRegime    = input.bool(true, "Use Regime SMA Filter",                      group="Regime")
+regimeLen    = input.int(40,  "Regime SMA Length (weeks)", minval=1,          group="Regime")
+
+// Optional Extra Filter
+useRsMomo   = input.bool(false,"Use Long-Term Momentum Filter (ROC > 0)",     group="Optional Filters")
+rocLen      = input.int(26,   "ROC Lookback",          minval=1,              group="Optional Filters")
+
+// Display
+showSma     = input.bool(true, "Show Regime SMA Line",                        group="Display")
+showZones   = input.bool(true, "Show Active Trade Zones",                     group="Display")
+showDash    = input.bool(true, "Show Performance Dashboard",                  group="Display")
+showTrail   = input.bool(true, "Show Chandelier Stop Line",                   group="Display")
+
+// ── INDICATORS ────────────────────────────────────────────────────────────────
+ema20  = ta.ema(close, emaFastLen)
+ema50  = ta.ema(close, emaSlowLen)
+smaReg = ta.sma(close, regimeLen)
+rsi    = ta.rsi(close, rsiLen)
+[macdLine, signalLine, _hist] = ta.macd(close, macdFast, macdSlow, macdSig)
+atr    = ta.atr(atrLen)
+
+volSMA = ta.sma(volume, volMAPeriod)
+volOk  = useVol ? volume > volSMA * volMult : true
+
+roc    = ta.roc(close, rocLen)
+rsOk   = useRsMomo ? roc > 0 : true
+
+regimeOk = useRegime ? close > smaReg : true
+
+// ── SIGNAL LOGIC ──────────────────────────────────────────────────────────────
+trendUp    = ema20 > ema50
+macdBullCx = ta.crossover(macdLine, signalLine)
+emaCrossDn = ta.crossunder(ema20, ema50)
+
+buySignal  = macdBullCx and trendUp and rsi > rsiMin and volOk and regimeOk and rsOk and barstate.isconfirmed
+sellSignal = useEmaExit and emaCrossDn and barstate.isconfirmed
+
+// ── PYRAMID GATE ──────────────────────────────────────────────────────────────
+var float lastEntryPrice = na
+var int   openEntries    = 0
+
+canEnter = strategy.position_size == 0 or (usePyramid and openEntries < maxAdds and not na(lastEntryPrice) and close > lastEntryPrice + atr * addDistATR)
+
+// ── CHANDELIER EXIT + PARTIAL PROFIT LOGIC ────────────────────────────────────
+var float entryPrice    = na
+var float initialStop   = na
+var float partialTarget = na
+var float chandStop     = na
+var float highestSince  = na
+var int   entryBar      = na
+var bool  partialTaken  = false
+
+if strategy.position_size == 0
+    entryPrice     := na
+    initialStop    := na
+    partialTarget  := na
+    chandStop      := na
+    highestSince   := na
+    entryBar       := na
+    openEntries    := 0
+    lastEntryPrice := na
+    partialTaken   := false
+
+if buySignal and canEnter
+    if strategy.position_size == 0
+        entryPrice    := close
+        initialStop   := close - atr * initStopMult
+        partialTarget := close + atr * initStopMult * partialR
+        chandStop     := initialStop
+        highestSince  := high
+        entryBar      := bar_index
+        partialTaken  := false
+    lastEntryPrice := close
+    openEntries    := openEntries + 1
+    strategy.entry("Long" + str.tostring(openEntries), strategy.long)
+
+if strategy.position_size > 0
+    highestSince := na(highestSince) ? high : math.max(highestSince, high)
+    newChand     = highestSince - atr * chandelierMult
+    chandStop    := na(chandStop) ? newChand : math.max(chandStop, newChand)
+    strategy.exit("Chand", stop=chandStop)
+
+    // Partial profit at 2R — close part of each pyramid entry, let rest trail
+    if usePartialTP and not partialTaken and high >= partialTarget
+        strategy.close("Long1", qty_percent=partialPct, comment="Partial TP")
+        strategy.close("Long2", qty_percent=partialPct, comment="Partial TP")
+        strategy.close("Long3", qty_percent=partialPct, comment="Partial TP")
+        partialTaken := true
+
+if sellSignal and strategy.position_size > 0
+    strategy.close_all(comment="EMA Exit")
+
+// ── VISUAL: EMA LINES + REGIME SMA ────────────────────────────────────────────
+plot(ema20, title="EMA Fast", color=color.new(color.blue,   0), linewidth=3, style=plot.style_line)
+plot(ema50, title="EMA Slow", color=color.new(color.orange, 0), linewidth=3, style=plot.style_line)
+
+smaPlotVal = showSma ? smaReg : na
+smaCol     = regimeOk ? color.new(color.green, 20) : color.new(color.red, 20)
+plot(smaPlotVal, title="Regime SMA", color=smaCol, linewidth=2, style=plot.style_line)
+
+regimeBg = useRegime and not regimeOk ? color.new(color.gray, 92) : na
+bgcolor(regimeBg, title="Regime Off Background")
+
+// ── VISUAL: BUY / SELL LABELS ─────────────────────────────────────────────────
+showBuy = buySignal and canEnter
+
+plotshape(showBuy, title="BUY", style=shape.labelup, location=location.belowbar, color=color.new(color.lime, 0), textcolor=color.black, size=size.normal, text="BUY")
+plotshape(sellSignal, title="SELL", style=shape.labeldown, location=location.abovebar, color=color.new(color.red, 0), textcolor=color.white, size=size.normal, text="SELL")
+
+bgCol = showBuy ? color.new(color.lime, 88) : sellSignal ? color.new(color.red, 88) : na
+bgcolor(bgCol, title="Signal Bar Highlight")
+
+// ── VISUAL: CHANDELIER + PARTIAL TARGET ───────────────────────────────────────
+plotChand = showTrail and strategy.position_size > 0 ? chandStop : na
+plot(plotChand, title="Chandelier Stop", color=color.new(color.red, 0), linewidth=2, style=plot.style_linebr)
+
+plotPartial = showTrail and strategy.position_size > 0 and usePartialTP and not partialTaken ? partialTarget : na
+plot(plotPartial, title="Partial TP (2R)", color=color.new(color.yellow, 0), linewidth=2, style=plot.style_linebr)
+
+// ── VISUAL: ACTIVE TRADE ZONES ────────────────────────────────────────────────
+var line entryLine = na
+var box  riskBox   = na
+
+inTrade = strategy.position_size > 0 and not na(entryPrice) and showZones
+
+if inTrade
+    line.delete(entryLine)
+    box.delete(riskBox)
+    entryLine := line.new(entryBar, entryPrice, bar_index, entryPrice, color=color.new(color.blue, 0), width=2, style=line.style_solid, extend=extend.right)
+    riskBox   := box.new(entryBar, entryPrice, bar_index, chandStop, border_color=color.new(color.red, 70), bgcolor=color.new(color.red, 90), extend=extend.right)
+
+if strategy.position_size == 0
+    line.delete(entryLine)
+    box.delete(riskBox)
+    entryLine := na
+    riskBox   := na
+
+// ── PERFORMANCE DASHBOARD ─────────────────────────────────────────────────────
+var table dash = table.new(position.top_right, 2, 11, bgcolor=color.new(color.black, 60), border_color=color.new(color.gray, 30), border_width=1, frame_color=color.new(color.gray, 30), frame_width=1)
+
+if barstate.islast and showDash
+    closed     = strategy.closedtrades
+    wins       = strategy.wintrades
+    losses     = strategy.losstrades
+    winRate    = closed > 0 ? wins / closed * 100 : 0.0
+    grossWin   = strategy.grossprofit
+    grossLoss  = math.abs(strategy.grossloss)
+    profitFact = grossLoss > 0 ? grossWin / grossLoss : na
+    netProfit  = strategy.netprofit
+    maxDD      = strategy.max_drawdown
+    avgWin     = wins   > 0 ? grossWin  / wins   : 0.0
+    avgLoss    = losses > 0 ? grossLoss / losses : 0.0
+    netPct     = strategy.initial_capital > 0 ? netProfit / strategy.initial_capital * 100 : 0.0
+    rrActual   = avgLoss > 0 ? avgWin / avgLoss : na
+
+    table.cell(dash, 0, 0, "Backtest Stats", text_color=color.white, bgcolor=color.new(color.navy, 10), text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 0, "", bgcolor=color.new(color.navy, 10))
+
+    pnlCol = netProfit >= 0 ? color.lime : color.red
+    table.cell(dash, 0, 1, "Net P&L", text_color=color.silver, text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 1, "$" + str.tostring(netProfit, "#.00") + " (" + str.tostring(netPct, "#.0") + "%)", text_color=pnlCol, text_halign=text.align_right, text_size=size.small)
+
+    table.cell(dash, 0, 2, "Total Trades", text_color=color.silver, text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 2, str.tostring(closed), text_color=color.white, text_halign=text.align_right, text_size=size.small)
+
+    wrCol = winRate >= 50 ? color.lime : color.orange
+    table.cell(dash, 0, 3, "Win Rate", text_color=color.silver, text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 3, str.tostring(winRate, "#.0") + "% (" + str.tostring(wins) + "W/" + str.tostring(losses) + "L)", text_color=wrCol, text_halign=text.align_right, text_size=size.small)
+
+    pfStr = na(profitFact) ? "N/A" : str.tostring(profitFact, "#.00")
+    pfCol = na(profitFact) ? color.gray : profitFact >= 1.5 ? color.lime : profitFact >= 1.0 ? color.orange : color.red
+    table.cell(dash, 0, 4, "Profit Factor", text_color=color.silver, text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 4, pfStr, text_color=pfCol, text_halign=text.align_right, text_size=size.small)
+
+    table.cell(dash, 0, 5, "Max Drawdown", text_color=color.silver, text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 5, "$" + str.tostring(maxDD, "#.00"), text_color=color.orange, text_halign=text.align_right, text_size=size.small)
+
+    table.cell(dash, 0, 6, "Avg Win", text_color=color.silver, text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 6, "$" + str.tostring(avgWin, "#.00"), text_color=color.lime, text_halign=text.align_right, text_size=size.small)
+
+    table.cell(dash, 0, 7, "Avg Loss", text_color=color.silver, text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 7, "$" + str.tostring(avgLoss, "#.00"), text_color=color.red, text_halign=text.align_right, text_size=size.small)
+
+    rrStr = na(rrActual) ? "N/A" : "1:" + str.tostring(rrActual, "#.00")
+    table.cell(dash, 0, 8, "Avg R:R", text_color=color.silver, text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 8, rrStr, text_color=color.aqua, text_halign=text.align_right, text_size=size.small)
+
+    table.cell(dash, 0, 9, "Timeframe", text_color=color.silver, text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 9, timeframe.period, text_color=color.white, text_halign=text.align_right, text_size=size.small)
+
+    table.cell(dash, 0, 10, "Equity", text_color=color.silver, text_halign=text.align_left, text_size=size.small)
+    table.cell(dash, 1, 10, "$" + str.tostring(strategy.equity, "#.00"), text_color=color.white, text_halign=text.align_right, text_size=size.small)
+
+// ── ALERTS ────────────────────────────────────────────────────────────────────
+alertcondition(showBuy,    title="BUY",  message="BUY {{ticker}} @ {{close}}")
+alertcondition(sellSignal, title="SELL", message="SELL {{ticker}} @ {{close}}")
