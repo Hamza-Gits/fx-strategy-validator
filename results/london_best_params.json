@@ -1,25 +1,52 @@
 {
   "converged": true,
-  "iteration": 1,
   "strategy": "london_breakout",
-  "note": "Baseline params already pass both periods. Full grid search running to find optimal params.",
-  "params": {
+  "summary": "London session open range breakout. Asian range (00:00-07:00 GMT) defines the channel. Entry on first H1 bar closing outside the range during London open (07:00-10:00 GMT). Stop = opposite side of range. Target = 1.5x range. Exit = SL, TP, or 17:00 GMT EOD.",
+  "optimal_params": {
     "tp_mult": 1.5,
-    "trend_filter": 0,
-    "w1_ema": 20,
+    "trend_filter": false,
     "min_range_pips": 10,
-    "max_range_pips": 80
+    "max_range_pips": 80,
+    "asian_session": "00:00-07:00 GMT",
+    "london_window": "07:00-10:00 GMT",
+    "eod_exit": "17:00 GMT",
+    "pairs": ["EURUSD", "GBPUSD", "USDJPY"]
   },
   "period_a": {
-    "start": "2015-01-01", "end": "2019-12-31",
-    "is_pf": 1.587, "oos_pf": 1.283, "oos_n": 536,
-    "bootstrap_pct": 99.6, "p_value": 0.0000, "passed": true
+    "dates": "2015-01-01 to 2019-12-31",
+    "is_pf": 1.587,
+    "is_wr": 0.53,
+    "oos_pf": 1.283,
+    "oos_wr": 0.474,
+    "oos_n": 536,
+    "bootstrap_pct": 99.6,
+    "dsr_p": 0.0,
+    "verdict": "PASS"
   },
   "period_b": {
-    "start": "2020-01-01", "end": "2024-12-31",
-    "note": "Data starts 2021-01-04 due to CSV split",
-    "is_pf": 1.511, "oos_pf": 1.850, "oos_n": 456,
-    "bootstrap_pct": 100.0, "p_value": 0.0000, "passed": true
+    "dates": "2021-01-04 to 2024-12-31",
+    "note": "2020 data absent from CSVs — data starts 2021",
+    "is_pf": 1.511,
+    "is_wr": 0.524,
+    "oos_pf": 1.850,
+    "oos_wr": 0.581,
+    "oos_n": 456,
+    "bootstrap_pct": 100.0,
+    "dsr_p": 0.0,
+    "verdict": "PASS"
   },
-  "timestamp": "2026-04-26T10:00:00Z"
+  "parameter_scan_notes": {
+    "tp_1.0_no_filter": "PASS both periods. OOS PF 1.345/1.683. More trades (569/451).",
+    "tp_1.5_no_filter": "PASS both periods. OOS PF 1.283/1.850. CHOSEN as optimal.",
+    "tp_2.0_no_filter": "FAIL Period A (DSR gate). Period B passes. RR too high for IS sample.",
+    "trend_filter_on": "FAIL Period A (halves trade count, DSR gate fails). Not recommended.",
+    "conclusion": "No trend filter needed. Market itself filters via Asian range boundaries."
+  },
+  "next_steps": [
+    "1. Forward test on 2025 data (partially in EURUSD_H1_2021-2025.csv)",
+    "2. Paper trade for 3 months minimum",
+    "3. Port to MQL5 EA: detect Asian range, enter on London open breakout, ATR-sized lot",
+    "4. Submit to prop firm after 3+ months forward test with consistent results"
+  ],
+  "timestamp": "2026-04-26T10:30:00Z"
 }
