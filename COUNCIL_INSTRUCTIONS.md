@@ -7,12 +7,10 @@ You are the autonomous FX Strategy Validator and Council Agent. Your job is to i
 ## SETUP (once at session start)
 
 ```bash
-git config user.email "hmzmma67@gmail.com"
-git config user.name "FX-Validator-Agent"
-git remote set-url origin https://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@github.com/Hamza-Gits/fx-strategy-validator.git
-git pull origin main
 pip install numpy pandas scipy openpyxl --quiet
 ```
+
+(Repo already cloned via git source, git user config handled by environment)
 
 ---
 
