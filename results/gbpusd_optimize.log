@@ -1,0 +1,48 @@
+
+============================================================
+  GBPUSD Deep Optimization (Council follow-up)
+============================================================
+  GBPUSD: 68762 H1 bars
+
+  Grid: 180 unique configurations
+
+  [  1/180] TP=1.0 mn=5 mx=60 trend=N  A:1.131 B:1.501  avg=1.316  B pass
+  [  2/180] TP=1.0 mn=5 mx=60 trend=Y W1=10  A:1.213 B:1.264  avg=1.239  fail
+  [  3/180] TP=1.0 mn=5 mx=60 trend=Y W1=20  A:1.46 B:1.452  avg=1.456  BOTH PASS
+  [  4/180] TP=1.0 mn=5 mx=60 trend=Y W1=26  A:1.605 B:1.507  avg=1.556  BOTH PASS
+  [  5/180] TP=1.0 mn=5 mx=80 trend=N  A:1.103 B:1.513  avg=1.308  B pass
+  [  6/180] TP=1.0 mn=5 mx=80 trend=Y W1=10  A:1.158 B:1.296  avg=1.227  fail
+  [  7/180] TP=1.0 mn=5 mx=80 trend=Y W1=20  A:1.421 B:1.482  avg=1.452  BOTH PASS
+  [  8/180] TP=1.0 mn=5 mx=80 trend=Y W1=26  A:1.557 B:1.537  avg=1.547  BOTH PASS
+  [  9/180] TP=1.0 mn=5 mx=100 trend=N  A:1.113 B:1.513  avg=1.313  B pass
+  [ 10/180] TP=1.0 mn=5 mx=100 trend=Y W1=10  A:1.158 B:1.296  avg=1.227  fail
+  [ 11/180] TP=1.0 mn=5 mx=100 trend=Y W1=20  A:1.421 B:1.482  avg=1.452  BOTH PASS
+  [ 12/180] TP=1.0 mn=5 mx=100 trend=Y W1=26  A:1.557 B:1.537  avg=1.547  BOTH PASS
+  [ 13/180] TP=1.0 mn=10 mx=60 trend=N  A:1.168 B:1.475  avg=1.321  B pass
+  [ 14/180] TP=1.0 mn=10 mx=60 trend=Y W1=10  A:1.229 B:1.239  avg=1.234  fail
+  [ 15/180] TP=1.0 mn=10 mx=60 trend=Y W1=20  A:1.483 B:1.429  avg=1.456  BOTH PASS
+  [ 16/180] TP=1.0 mn=10 mx=60 trend=Y W1=26  A:1.634 B:1.484  avg=1.559  BOTH PASS
+  [ 17/180] TP=1.0 mn=10 mx=80 trend=N  A:1.138 B:1.488  avg=1.313  B pass
+  [ 18/180] TP=1.0 mn=10 mx=80 trend=Y W1=10  A:1.172 B:1.27  avg=1.221  fail
+  [ 19/180] TP=1.0 mn=10 mx=80 trend=Y W1=20  A:1.442 B:1.458  avg=1.450  BOTH PASS
+  [ 20/180] TP=1.0 mn=10 mx=80 trend=Y W1=26  A:1.584 B:1.513  avg=1.548  BOTH PASS
+  [ 21/180] TP=1.0 mn=10 mx=100 trend=N  A:1.148 B:1.488  avg=1.318  B pass
+  [ 22/180] TP=1.0 mn=10 mx=100 trend=Y W1=10  A:1.172 B:1.27  avg=1.221  fail
+  [ 23/180] TP=1.0 mn=10 mx=100 trend=Y W1=20  A:1.442 B:1.458  avg=1.450  BOTH PASS
+  [ 24/180] TP=1.0 mn=10 mx=100 trend=Y W1=26  A:1.584 B:1.513  avg=1.548  BOTH PASS
+  [ 25/180] TP=1.0 mn=15 mx=60 trend=N  A:1.209 B:1.542  avg=1.376  B pass
+  [ 26/180] TP=1.0 mn=15 mx=60 trend=Y W1=10  A:1.234 B:1.328  avg=1.281  fail
+  [ 27/180] TP=1.0 mn=15 mx=60 trend=Y W1=20  A:1.42 B:1.573  avg=1.496  BOTH PASS
+  [ 28/180] TP=1.0 mn=15 mx=60 trend=Y W1=26  A:1.543 B:1.637  avg=1.590  BOTH PASS
+  [ 29/180] TP=1.0 mn=15 mx=80 trend=N  A:1.171 B:1.557  avg=1.364  B pass
+  [ 30/180] TP=1.0 mn=15 mx=80 trend=Y W1=10  A:1.164 B:1.365  avg=1.264  fail
+  [ 31/180] TP=1.0 mn=15 mx=80 trend=Y W1=20  A:1.374 B:1.607  avg=1.490  B pass
+  [ 32/180] TP=1.0 mn=15 mx=80 trend=Y W1=26  A:1.488 B:1.671  avg=1.579  BOTH PASS
+  [ 33/180] TP=1.0 mn=15 mx=100 trend=N  A:1.184 B:1.557  avg=1.370  B pass
+  [ 34/180] TP=1.0 mn=15 mx=100 trend=Y W1=10  A:1.164 B:1.365  avg=1.264  fail
+  [ 35/180] TP=1.0 mn=15 mx=100 trend=Y W1=20  A:1.374 B:1.607  avg=1.490  B pass
+  [ 36/180] TP=1.0 mn=15 mx=100 trend=Y W1=26  A:1.488 B:1.671  avg=1.579  BOTH PASS
+  [ 37/180] TP=1.25 mn=5 mx=60 trend=N  A:1.152 B:1.682  avg=1.417  B pass
+  [ 38/180] TP=1.25 mn=5 mx=60 trend=Y W1=10  A:1.193 B:1.4  avg=1.296  fail
+  [ 39/180] TP=1.25 mn=5 mx=60 trend=Y W1=20  A:1.367 B:1.622  avg=1.494  BOTH PASS
+  [ 40/180] TP=1.25 mn=5 mx=60 trend=Y W1=26  A:1.478 B:1.689  avg=1.583  BOTH PASS

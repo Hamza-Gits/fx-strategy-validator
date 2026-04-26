@@ -5472,3 +5472,1354 @@ SL=2.5x  TP=2.25x  RR=0.90
   IS PF=0.897  OOS PF=0.76  N=36  Bootstrap=22.2%  p=1.0  -> FAIL
 
 **Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 301  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=20  ATR=21  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.635  OOS PF=0.768  N=34  Bootstrap=23.2%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 310  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=20  ATR=21  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.635  OOS PF=0.768  N=34  Bootstrap=23.1%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 302  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=20  ATR=21  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+  IS PF=0.433  OOS PF=1.05  N=31  Bootstrap=54.6%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 311  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=20  ATR=21  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+  IS PF=0.433  OOS PF=1.05  N=31  Bootstrap=55.2%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 303  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=20  ATR=21  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.497  OOS PF=1.072  N=27  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 312  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=20  ATR=21  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.497  OOS PF=1.072  N=27  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 304  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.57  OOS PF=0.652  N=31  Bootstrap=12.3%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 313  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.57  OOS PF=0.652  N=31  Bootstrap=12.4%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 314  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.592  OOS PF=0.676  N=29  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 305  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.592  OOS PF=0.676  N=29  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 306  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.657  OOS PF=0.812  N=27  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 315  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.657  OOS PF=0.812  N=27  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 316  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.532  OOS PF=0.644  N=26  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 307  --  2026-04-26 10:15 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.532  OOS PF=0.644  N=26  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 317  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+  IS PF=0.625  OOS PF=0.538  N=30  Bootstrap=5.7%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 308  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+  IS PF=0.625  OOS PF=0.538  N=30  Bootstrap=5.4%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 318  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.625  OOS PF=0.558  N=28  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 309  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.625  OOS PF=0.558  N=28  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 319  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.693  OOS PF=0.673  N=26  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 310  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.693  OOS PF=0.673  N=26  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 320  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+  IS PF=0.538  OOS PF=0.594  N=23  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 311  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+  IS PF=0.538  OOS PF=0.594  N=23  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 312  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+---------------------------------
+  IS PF=0.532  OOS PF=0.535  N=25  Bootstrap=None%  p=None  -> FAIL
+## Iteration 321  --  2026-04-26 10:16 UTC
+
+**Period B:** skipped (Period A failed)
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.532  OOS PF=0.535  N=25  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 322  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.532  OOS PF=0.624  N=24  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 313  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.532  OOS PF=0.624  N=24  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 314  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+  IS PF=0.59  OOS PF=0.642  N=21  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 323  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+  IS PF=0.59  OOS PF=0.642  N=21  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 315  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.46  OOS PF=0.642  N=20  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 324  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=14  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.46  OOS PF=0.642  N=20  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 325  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.738  OOS PF=0.652  N=31  Bootstrap=12.4%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 316  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.738  OOS PF=0.652  N=31  Bootstrap=12.3%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 326  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.624  OOS PF=0.676  N=29  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 317  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.624  OOS PF=0.676  N=29  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 327  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.692  OOS PF=0.811  N=27  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 318  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.692  OOS PF=0.811  N=27  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 319  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.547  OOS PF=0.507  N=24  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 328  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.547  OOS PF=0.507  N=24  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 320  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+  IS PF=0.703  OOS PF=0.554  N=30  Bootstrap=6.2%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 329  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+  IS PF=0.703  OOS PF=0.554  N=30  Bootstrap=6.3%  p=1.0  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 321  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.605  OOS PF=0.575  N=28  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 330  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.605  OOS PF=0.575  N=28  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 331  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.671  OOS PF=0.695  N=26  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 322  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.671  OOS PF=0.695  N=26  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 332  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+  IS PF=0.521  OOS PF=0.491  N=21  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 323  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+  IS PF=0.521  OOS PF=0.491  N=21  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 324  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.621  OOS PF=0.626  N=26  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 333  --  2026-04-26 10:16 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.621  OOS PF=0.626  N=26  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 334  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.533  OOS PF=0.65  N=24  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 325  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.533  OOS PF=0.65  N=24  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 326  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+  IS PF=0.591  OOS PF=0.805  N=22  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 335  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+  IS PF=0.591  OOS PF=0.805  N=22  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 336  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.461  OOS PF=0.527  N=19  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 327  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=50  ATR=21  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.461  OOS PF=0.527  N=19  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 328  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.535  OOS PF=0.744  N=23  Bootstrap=None%  p=None  -> FAIL
+
+------------------------------------------------------------
+
+**Period B:** skipped (Period A failed)
+## Iteration 337  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.535  OOS PF=0.744  N=23  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 338  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.488  OOS PF=0.709  N=21  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 329  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.488  OOS PF=0.709  N=21  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 330  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.488  OOS PF=0.812  N=19  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 339  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.488  OOS PF=0.812  N=19  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 340  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+
+------------------------------------------------------------
+  IS PF=0.308  OOS PF=1.013  N=19  Bootstrap=None%  p=None  -> FAIL
+## Iteration 331  --  2026-04-26 10:17 UTC
+
+**Period B:** skipped (Period A failed)
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.308  OOS PF=1.013  N=19  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 341  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+  IS PF=0.522  OOS PF=0.635  N=22  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 332  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+  IS PF=0.522  OOS PF=0.635  N=22  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 333  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.486  OOS PF=0.786  N=20  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 342  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.486  OOS PF=0.786  N=20  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 343  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+
+------------------------------------------------------------
+  IS PF=0.468  OOS PF=0.766  N=17  Bootstrap=None%  p=None  -> FAIL
+## Iteration 334  --  2026-04-26 10:17 UTC
+
+**Period B:** skipped (Period A failed)
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.468  OOS PF=0.766  N=17  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 344  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+  IS PF=0.303  OOS PF=0.955  N=17  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 335  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+  IS PF=0.303  OOS PF=0.955  N=17  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 336  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.597  OOS PF=0.536  N=22  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 345  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.597  OOS PF=0.536  N=22  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 337  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.489  OOS PF=0.735  N=19  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 346  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.489  OOS PF=0.735  N=19  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 338  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+  IS PF=0.465  OOS PF=0.728  N=16  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 347  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+  IS PF=0.465  OOS PF=0.728  N=16  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 348  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.305  OOS PF=0.907  N=16  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 339  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=14  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.305  OOS PF=0.907  N=16  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 349  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.675  OOS PF=0.743  N=23  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 340  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.675  OOS PF=0.743  N=23  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 350  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.489  OOS PF=0.708  N=21  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 341  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.489  OOS PF=0.708  N=21  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 342  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.489  OOS PF=0.811  N=19  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 351  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.489  OOS PF=0.811  N=19  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 352  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.309  OOS PF=0.761  N=18  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 343  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.309  OOS PF=0.761  N=18  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 344  --  2026-04-26 10:17 UTC
+## Iteration 353  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.0x  TP=2.25x  RR=1.12
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+
+**Period A (2015-2019):**
+  IS PF=0.617  OOS PF=0.633  N=22  Bootstrap=None%  p=None  -> FAIL
+  IS PF=0.617  OOS PF=0.633  N=22  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 345  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.488  OOS PF=0.784  N=20  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 354  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.488  OOS PF=0.784  N=20  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 346  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.469  OOS PF=0.763  N=17  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 355  --  2026-04-26 10:17 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.469  OOS PF=0.763  N=17  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 347  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+  IS PF=0.304  OOS PF=0.716  N=16  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 356  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+  IS PF=0.304  OOS PF=0.716  N=16  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 348  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.686  OOS PF=0.559  N=22  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 357  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.686  OOS PF=0.559  N=22  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 358  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.491  OOS PF=0.774  N=19  Bootstrap=None%  p=None  -> FAIL
+## Iteration 349  --  2026-04-26 10:18 UTC
+
+**Period B:** skipped (Period A failed)
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.491  OOS PF=0.774  N=19  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+
+------------------------------------------------------------
+## Iteration 359  --  2026-04-26 10:18 UTC
+## Iteration 350  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.5x  TP=4.0x  RR=1.60
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+
+**Period A (2015-2019):**
+  IS PF=0.467  OOS PF=0.771  N=16  Bootstrap=None%  p=None  -> FAIL
+  IS PF=0.467  OOS PF=0.771  N=16  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 360  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.306  OOS PF=0.772  N=15  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 351  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=100  ATR=21  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.306  OOS PF=0.772  N=15  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 361  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.691  OOS PF=1.418  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 352  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.691  OOS PF=1.418  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 362  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.779  OOS PF=1.881  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 353  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.779  OOS PF=1.881  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 354  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.566  OOS PF=2.498  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 363  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.566  OOS PF=2.498  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 364  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.272  OOS PF=2.498  N=13  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 355  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.272  OOS PF=2.498  N=13  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 365  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+  IS PF=0.601  OOS PF=1.137  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 356  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+  IS PF=0.601  OOS PF=1.137  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 366  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.672  OOS PF=1.508  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 357  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.672  OOS PF=1.508  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 367  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.489  OOS PF=2.003  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 358  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.489  OOS PF=2.003  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 368  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+  IS PF=0.242  OOS PF=2.003  N=13  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 359  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+  IS PF=0.242  OOS PF=2.003  N=13  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 369  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.554  OOS PF=0.949  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 360  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.554  OOS PF=0.949  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 370  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.624  OOS PF=1.259  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 361  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.624  OOS PF=1.259  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 371  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+  IS PF=0.448  OOS PF=1.672  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 362  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+  IS PF=0.448  OOS PF=1.672  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 372  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.222  OOS PF=1.672  N=13  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 363  --  2026-04-26 10:18 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=14  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.222  OOS PF=1.672  N=13  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 373  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.674  OOS PF=1.267  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 364  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=1.5x  TP=2.25x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.674  OOS PF=1.267  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+
+------------------------------------------------------------
+## Iteration 374  --  2026-04-26 10:19 UTC
+## Iteration 365  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=1.5x  TP=3.0x  RR=2.00
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=1.5x  TP=3.0x  RR=2.00
+
+**Period A (2015-2019):**
+
+**Period A (2015-2019):**
+  IS PF=0.761  OOS PF=1.681  N=14  Bootstrap=None%  p=None  -> FAIL
+  IS PF=0.761  OOS PF=1.681  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 375  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.555  OOS PF=2.234  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 366  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=1.5x  TP=4.0x  RR=2.67
+
+**Period A (2015-2019):**
+  IS PF=0.555  OOS PF=2.234  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 367  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.267  OOS PF=1.681  N=12  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 376  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=1.5x  TP=5.0x  RR=3.33
+
+**Period A (2015-2019):**
+  IS PF=0.267  OOS PF=1.681  N=12  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 377  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+  IS PF=0.602  OOS PF=1.129  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 368  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.0x  TP=2.25x  RR=1.12
+
+**Period A (2015-2019):**
+  IS PF=0.602  OOS PF=1.129  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 369  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.673  OOS PF=1.498  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 378  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.0x  TP=3.0x  RR=1.50
+
+**Period A (2015-2019):**
+  IS PF=0.673  OOS PF=1.498  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 370  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.49  OOS PF=1.99  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 379  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.0x  TP=4.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.49  OOS PF=1.99  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 371  --  2026-04-26 10:19 UTC
+## Iteration 380  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.0x  TP=5.0x  RR=2.50
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.0x  TP=5.0x  RR=2.50
+
+**Period A (2015-2019):**
+
+**Period A (2015-2019):**
+  IS PF=0.242  OOS PF=1.498  N=12  Bootstrap=None%  p=None  -> FAIL
+  IS PF=0.242  OOS PF=1.498  N=12  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 372  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.552  OOS PF=1.058  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 381  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.5x  TP=2.25x  RR=0.90
+
+**Period A (2015-2019):**
+  IS PF=0.552  OOS PF=1.058  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 382  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.622  OOS PF=1.404  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 373  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.5x  TP=3.0x  RR=1.20
+
+**Period A (2015-2019):**
+  IS PF=0.622  OOS PF=1.404  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 383  --  2026-04-26 10:19 UTC
+## Iteration 374  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.5x  TP=4.0x  RR=1.60
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.5x  TP=4.0x  RR=1.60
+
+**Period A (2015-2019):**
+
+**Period A (2015-2019):**
+  IS PF=0.447  OOS PF=1.866  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+  IS PF=0.447  OOS PF=1.866  N=14  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 375  --  2026-04-26 10:19 UTC
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.5x  TP=5.0x  RR=2.00
+
+**Period A (2015-2019):**
+  IS PF=0.221  OOS PF=1.603  N=12  Bootstrap=None%  p=None  -> FAIL
+
+**Period B:** skipped (Period A failed)
+
+------------------------------------------------------------
+## Iteration 384  --  2026-04-26 10:19 UTC
+
+============================================================
+**Params:** W1_EMA=50  D1_EMA=200  ATR=21  SL=2.5x  TP=5.0x  RR=2.00
+Grid exhausted after 375 iterations without convergence.
+
+**Period A (2015-2019):**
+Consider expanding the parameter grid in PARAM_GRID.
+  IS PF=0.221  OOS PF=1.603  N=12  Bootstrap=None%  p=None  -> FAIL
+============================================================
+
+**Period B:** skipped (Period A failed)
+
+============================================================
+Grid exhausted after 384 iterations without convergence.
+Consider expanding the parameter grid in PARAM_GRID.
+============================================================
