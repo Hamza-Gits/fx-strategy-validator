@@ -16,10 +16,18 @@ Usage:
 import sys
 import os
 import json
+import re
 import subprocess
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 from itertools import product
+
+# Fix Windows console encoding so Unicode in log strings doesn't crash
+if sys.stdout.encoding and sys.stdout.encoding.lower() not in ('utf-8', 'utf-16'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    except AttributeError:
+        pass
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
 
@@ -40,11 +48,11 @@ PERIOD_B = ('2020-01-01', '2024-12-31')
 # RR ratios: 1.5 (3/2), 2.0 (4/2), 2.5 (5/2)
 
 PARAM_GRID = list(product(
-    [8, 12, 20, 26],        # W1 EMA period
-    [10, 20, 30, 50],       # D1 EMA period
-    [14, 21],               # ATR period
-    [1.5, 2.0, 2.5],        # SL ATR multiplier
-    [2.25, 3.0, 4.0, 5.0],  # TP ATR multiplier (RR = tp/sl)
+    [12, 20, 26, 50],           # W1 EMA period  (removed 8 — too fast/noisy)
+    [20, 50, 100, 200],         # D1 EMA period  (added 100, 200 — institutional levels)
+    [14, 21],                   # ATR period
+    [1.5, 2.0, 2.5],            # SL ATR multiplier
+    [2.25, 3.0, 4.0, 5.0],     # TP ATR multiplier (RR = tp/sl)
 ))
 
 # ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -121,20 +129,21 @@ def run_strategy(label, start, end, w1_ema, d1_ema, atr, sl_mult, tp_mult,
 
 def log_iteration(n: int, params: dict, period_a: dict, period_b: dict | None):
     bar = '-' * 60
+    now = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
     log(f"\n{bar}")
-    log(f"## Iteration {n}  —  {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}")
+    log(f"## Iteration {n}  --  {now}")
     log(f"**Params:** W1_EMA={params['w1_ema']}  D1_EMA={params['d1_ema']}  "
         f"ATR={params['atr']}  SL={params['sl_mult']}x  TP={params['tp_mult']}x  "
         f"RR={params['tp_mult']/params['sl_mult']:.2f}")
     log(f"\n**Period A (2015-2019):**")
     log(f"  IS PF={period_a['is_pf']}  OOS PF={period_a['oos_pf']}  "
         f"N={period_a['oos_n']}  Bootstrap={period_a['bootstrap']}%  "
-        f"p={period_a['dsr_p']}  → {'PASS' if period_a['passed'] else 'FAIL'}")
+        f"p={period_a['dsr_p']}  -> {'PASS' if period_a['passed'] else 'FAIL'}")
     if period_b:
         log(f"\n**Period B (2020-2024):**")
         log(f"  IS PF={period_b['is_pf']}  OOS PF={period_b['oos_pf']}  "
             f"N={period_b['oos_n']}  Bootstrap={period_b['bootstrap']}%  "
-            f"p={period_b['dsr_p']}  → {'PASS' if period_b['passed'] else 'FAIL'}")
+            f"p={period_b['dsr_p']}  -> {'PASS' if period_b['passed'] else 'FAIL'}")
     else:
         log(f"\n**Period B:** skipped (Period A failed)")
 
@@ -143,18 +152,31 @@ def log_iteration(n: int, params: dict, period_a: dict, period_b: dict | None):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--max-iter', type=int, default=100)
+    parser.add_argument('--max-iter', type=int, default=384)
     parser.add_argument('--data-dir', default=DATA_DIR_DEFAULT)
-    parser.add_argument('--start-from', type=int, default=1,
-                        help='Resume from this iteration number (skip earlier grid entries)')
+    parser.add_argument('--start-from', type=int, default=None,
+                        help='Resume from this grid index (1-based). Auto-detected from log if omitted.')
+    parser.add_argument('--resume', action='store_true',
+                        help='Auto-read log and resume after last completed iteration')
     args = parser.parse_args()
 
     ensure_dirs()
+
+    # Auto-detect resume point from existing log
+    start_from = args.start_from or 1
+    if args.resume or (args.start_from is None and os.path.exists(LOG_FILE)):
+        with open(LOG_FILE, 'r', encoding='utf-8') as f:
+            content = f.read()
+        completed = len(re.findall(r'^## Iteration \d+', content, re.MULTILINE))
+        if completed > 0:
+            start_from = completed + 1
+            print(f"  Auto-resume: {completed} iterations already logged, starting from #{start_from}")
 
     print(f"\n{'='*60}")
     print(f"  AUTONOMOUS STRATEGY ITERATION LOOP")
     print(f"  Max iterations: {args.max_iter}")
     print(f"  Parameter grid: {len(PARAM_GRID)} combinations")
+    print(f"  Starting from:  #{start_from}")
     print(f"  Data dir: {args.data_dir}")
     print(f"  Log: {LOG_FILE}")
     print(f"{'='*60}\n")
@@ -163,11 +185,12 @@ def main():
     if not os.path.exists(LOG_FILE):
         with open(LOG_FILE, 'w', encoding='utf-8') as f:
             f.write("# Strategy Iteration Log\n\n")
-            f.write(f"Started: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}\n\n")
+            now = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+            f.write(f"Started: {now}\n\n")
 
     iteration = 0
     for idx, (w1_ema, d1_ema, atr, sl_mult, tp_mult) in enumerate(PARAM_GRID):
-        if idx + 1 < args.start_from:
+        if idx + 1 < start_from:
             continue
         iteration += 1
         if iteration > args.max_iter:

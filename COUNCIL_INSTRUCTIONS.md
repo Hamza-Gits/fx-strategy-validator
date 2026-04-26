@@ -1,185 +1,136 @@
 # FX Strategy Council Agent — Instructions
 
-You are the autonomous FX Strategy Validator and Council Agent. Your job is to intelligently test, analyse, and improve a D1/W1 momentum trading strategy on FX pairs (EURUSD, GBPUSD, USDJPY). You act as both the backtester AND the strategic council — analysing each result, reasoning about what failed and why, then deciding what to test next. Run as many iterations as possible within this session. NEVER stop early.
+You are the autonomous FX Strategy Validator. Your job is to run the parameter search loop,
+analyse results as a 5-member Council, and iterate until a statistically valid strategy is found.
 
 ---
 
 ## SETUP (once at session start)
 
 ```bash
-pip install numpy pandas scipy openpyxl --quiet
+pip install numpy pandas scipy --quiet
 ```
-
-(Repo already cloned via git source, git user config handled by environment)
 
 ---
 
-## CHECK FOR CONVERGENCE
+## STEP 1: CHECK FOR CONVERGENCE
 
 ```bash
 cat results/best_params.json 2>/dev/null
 ```
-If it contains `"converged": true` — print "CONVERGED: Strategy already found." and STOP.
+
+If it contains `"converged": true` — print "STRATEGY ALREADY FOUND" and STOP.
 
 ---
 
-## READ FULL HISTORY
+## STEP 2: RUN THE ITERATION LOOP
+
+Run the automated loop. It auto-resumes from where the last session stopped.
 
 ```bash
-cat results/iteration_log.md 2>/dev/null
+python run_loop.py --max-iter 384
 ```
 
-Study carefully:
-- How many iterations completed?
-- What parameters were tested so far?
-- What OOS PF values were produced?
-- Which params produced the HIGHEST OOS PF even if they failed the gates?
-- Are there patterns? (longer EMA = better? higher RR = better? certain SL widths?)
-- What did the Council recommend last session? Was it correct?
+This will:
+- Auto-detect how many iterations are already in results/iteration_log.md
+- Skip already-completed iterations
+- Test remaining parameter combinations in the grid
+- Log every result to results/iteration_log.md
+- Save winning params to results/best_params.json when both periods pass
+
+Let it run. Do NOT interrupt it early. It takes 30-60 minutes to complete the full grid.
 
 ---
 
-## CORE LOOP — repeat until session ends
+## STEP 3: READ THE RESULTS
 
-### STEP 1: COUNCIL ANALYSIS
+When run_loop.py finishes (or if you re-enter mid-run), read the log:
 
-Before every iteration, think through the results as a 5-member council. Write your reasoning to results/iteration_log.md BEFORE running the backtest.
+```bash
+cat results/iteration_log.md
+```
+
+---
+
+## STEP 4: COUNCIL ANALYSIS
+
+Analyse the iteration log as a 5-member council:
 
 **Advisor 1 — Statistician:**
-What does the OOS PF distribution look like across all tested params? Which parameter ranges consistently produce higher PF? Are there any that produced PF > 1.0 even if they failed bootstrap?
+What does the OOS PF distribution look like? Which parameter ranges produce higher PF?
+Are there any combinations that produced OOS PF > 1.0 even if bootstrap failed?
+Is the bootstrap consistently below 50%? That signals no edge, not just unlucky params.
 
 **Advisor 2 — Market Structure:**
-Is D1/W1 EMA cross-back the right entry signal for FX majors? If it is consistently failing, alternatives to consider:
-- Pure pullback to EMA (price touches EMA from above/below, no cross required)
-- ATR expansion entry (enter when daily range expands beyond 1.5x ATR)
-- W1 trend + D1 close above/below prior day's high/low (breakout variant)
-- Session breakout (London open high/low of previous session)
+Is the D1 EMA cross-back structurally generating signal? If IS PF is consistently below 1.0
+across ALL params, the entry logic itself is broken. Consider alternatives:
+- Pullback-to-EMA (price approaches within 0.5 ATR, bounces in trend direction)
+- ATR expansion entry (daily range > 1.5x ATR signals momentum continuation)
+- D1 close above prior day high/low in W1 trend direction (breakout variant)
 
 **Advisor 3 — Risk Manager:**
-Is the RR ratio correct? Win rate has been ~37%. For RR = 1.5: EV = 0.37×1.5 - 0.63×1 = -0.075 (LOSING). What RR do we need at 37% win rate to break even? Answer: 1/0.37 - 1 = 1.7. So we need RR > 1.7 minimum. At RR = 2.0: EV = 0.37×2 - 0.63×1 = 0.11 (positive). Recommend testing higher RR combinations.
+What is the average win rate across tested params? At 35% win rate:
+- RR 1.5 gives EV = 0.35*1.5 - 0.65 = -0.125 (losing)
+- RR 2.0 gives EV = 0.35*2.0 - 0.65 = +0.05 (breakeven)
+- RR 3.0 gives EV = 0.35*3.0 - 0.65 = +0.40 (profitable)
+Minimum viable RR = 1/win_rate - 1. What does the data suggest?
 
 **Advisor 4 — Quant:**
-Should we test wider EMAs? EMA(50), EMA(100), EMA(200) on D1 are classic trend filters used in institutional strategies. The current range (10–50) may be too tight. Should we extend the grid?
+Trade count per period: are we getting 30+ OOS trades? If consistently below 30,
+the strategy generates too few signals. Options: add more pairs, or switch to H4 entry
+timeframe (the harness resamples H1 data so this only requires a code change).
 
 **Advisor 5 — Devil's Advocate:**
-If 15+ iterations have all failed with bootstrap < 70%, the EMA cross-back entry is likely structurally broken for these pairs on this timeframe. It must be replaced with a fundamentally different entry signal. Has that threshold been reached?
+If every single parameter combination failed AND IS PF < 1.0 consistently, the EMA
+cross-back entry has no edge on these pairs. A new entry signal must be coded into
+strategy_template.py before more testing makes any sense.
 
 **Chairman Synthesis:**
-Based on all 5 advisors, decide: what SPECIFIC parameters to test next and why. Document the reasoning. Never repeat already-tested parameters.
+Based on all 5 advisors, decide:
+1. Is the current strategy worth continuing, or does strategy_template.py need rewriting?
+2. If continuing — what specific params to investigate further?
+3. If rewriting — write out the exact new entry logic with enough detail to implement it.
 
 ---
 
-### STEP 2: RUN PERIOD A (2015–2019)
+## STEP 5: IF STRATEGY_TEMPLATE.PY NEEDS UPDATING
+
+Write the new entry logic as a concrete code change to strategy_template.py.
+Document the change in results/iteration_log.md.
+Reset the grid by clearing results/iteration_log.md, then re-run from Step 2.
+
+---
+
+## STEP 6: IF CONVERGED
+
+Both Period A (2015–2019) and Period B (2020–2024) passed all gates. best_params.json exists.
+
+Print a full summary:
+- Winning parameters
+- Period A stats: OOS PF, Bootstrap %, p-value, N trades
+- Period B stats: OOS PF, Bootstrap %, p-value, N trades
+- Next step: forward test on 2025+ data before prop firm deployment
+
+---
+
+## COMMIT RESULTS
+
+After run_loop.py finishes or after a strategy change:
 
 ```bash
-python validation_harness/strategy_template.py \
-  --start 2015-01-01 --end 2019-12-31 \
-  --data-dir ./data \
-  --label "Iteration N - Period A" \
-  --w1-ema W1 --d1-ema D1 --atr ATR \
-  --sl-mult SL --tp-mult TP
-```
-
-Capture full output. Record: IS PF, OOS PF, OOS N, Bootstrap %, Deflated Sharpe p-value, PASS/FAIL.
-
----
-
-### STEP 3: COUNCIL VERDICT ON PERIOD A
-
-**If FAILED:**
-- Which gate failed? (bootstrap too low? p-value too high? degradation? sample size?)
-- What does this tell us specifically?
-- Do NOT run Period B
-- Go to Step 5 (log) then back to Step 1 with new params
-
-**If PASSED:**
-- How strong is the OOS PF? Marginal (1.0–1.2) or strong (>1.3)?
-- Run Period B
-
----
-
-### STEP 4: RUN PERIOD B (2020–2024)
-
-```bash
-python validation_harness/strategy_template.py \
-  --start 2020-01-01 --end 2024-12-31 \
-  --data-dir ./data \
-  --label "Iteration N - Period B" \
-  --w1-ema W1 --d1-ema D1 --atr ATR \
-  --sl-mult SL --tp-mult TP
-```
-
-Capture full output. Apply Council analysis to Period B result.
-
----
-
-### STEP 5: LOG EVERYTHING
-
-Append to results/iteration_log.md:
-
-```
----
-## Iteration N — YYYY-MM-DD HH:MM UTC
-
-**Council Recommendation:** [full reasoning from the 5 advisors and Chairman]
-
-**Params:** W1_EMA=X  D1_EMA=X  ATR=X  SL=Xx ATR  TP=Xx ATR  RR=X.X
-
-**Period A (2015–2019):**
-  IS PF=X  OOS PF=X  OOS N=X  Bootstrap=X%  p=X  →  PASS/FAIL
-
-**Period B (2020–2024):**
-  IS PF=X  OOS PF=X  OOS N=X  Bootstrap=X%  p=X  →  PASS/FAIL
-  [or: Skipped — Period A failed]
-
-**Post-result analysis:** [what this result tells us, what it implies for next iteration]
-```
-
----
-
-### STEP 6: COMMIT EVERY 5 ITERATIONS
-
-```bash
-git add results/ validation_harness/
-git commit -m "Auto: iteration N completed $(date +%Y-%m-%d_%H:%M)"
+git add results/ validation_harness/ run_loop.py COUNCIL_INSTRUCTIONS.md
+git commit -m "Auto: iteration batch completed $(date +%Y-%m-%d_%H:%M)"
 git push origin main
 ```
 
 ---
 
-### STEP 7: CHECK FOR SUCCESS
+## VALIDATION GATES (reference)
 
-If BOTH Period A AND Period B passed all gates:
+A parameter combination PASSES if ALL of these are met:
+- OOS N >= 30 trades
+- IS->OOS degradation < 30%
+- Bootstrap OOS PF beats 95th percentile of zero-edge null
+- Deflated Sharpe p-value < 0.007 (corrected for 9 prior trials)
 
-1. Write results/best_params.json:
-```json
-{
-  "converged": true,
-  "iteration": N,
-  "params": {"w1_ema": X, "d1_ema": X, "atr": X, "sl_mult": X, "tp_mult": X},
-  "period_a": {"oos_pf": X, "bootstrap_pct": X, "p_value": X, "oos_n": X},
-  "period_b": {"oos_pf": X, "bootstrap_pct": X, "p_value": X, "oos_n": X},
-  "timestamp": "YYYY-MM-DDTHH:MM:SSZ"
-}
-```
-
-2. Final git push:
-```bash
-git add results/
-git commit -m "CONVERGED: Winning strategy found at iteration N"
-git push origin main
-```
-
-3. Print full CONVERGED summary with all params and stats. STOP.
-
----
-
-### STEP 8: REPEAT
-
-Go back to STEP 1. Never test the same parameters twice. Always reason from history. Always commit every 5 iterations. Run until session limit — use every available token.
-
----
-
-## WHEN TO ESCALATE BEYOND EMA CROSS-BACK
-
-If after 15+ iterations the bootstrap is CONSISTENTLY below 70% (signal is barely better than random), conclude in the log that the EMA cross-back entry is structurally broken for these pairs. Document a specific alternative entry signal to implement next session, with enough detail for the next agent to code it into strategy_template.py.
+Both Period A (2015–2019) AND Period B (2020–2024) must pass.
