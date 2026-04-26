@@ -146,3 +146,86 @@
   [138/180] TP=1.75 mn=15 mx=80 trend=Y W1=10  A:1.345 B:1.192  avg=1.268  fail
   [139/180] TP=1.75 mn=15 mx=80 trend=Y W1=20  A:1.477 B:1.454  avg=1.466  A pass
   [140/180] TP=1.75 mn=15 mx=80 trend=Y W1=26  A:1.555 B:1.529  avg=1.542  BOTH PASS
+  [141/180] TP=1.75 mn=15 mx=100 trend=N  A:1.264 B:1.692  avg=1.478  B pass
+  [142/180] TP=1.75 mn=15 mx=100 trend=Y W1=10  A:1.345 B:1.192  avg=1.268  fail
+  [143/180] TP=1.75 mn=15 mx=100 trend=Y W1=20  A:1.477 B:1.454  avg=1.466  A pass
+  [144/180] TP=1.75 mn=15 mx=100 trend=Y W1=26  A:1.555 B:1.529  avg=1.542  BOTH PASS
+  [145/180] TP=2.0 mn=5 mx=60 trend=N  A:1.233 B:1.537  avg=1.385  B pass
+  [146/180] TP=2.0 mn=5 mx=60 trend=Y W1=10  A:1.212 B:1.015  avg=1.113  fail
+  [147/180] TP=2.0 mn=5 mx=60 trend=Y W1=20  A:1.374 B:1.149  avg=1.262  A pass
+  [148/180] TP=2.0 mn=5 mx=60 trend=Y W1=26  A:1.523 B:1.146  avg=1.334  A pass
+  [149/180] TP=2.0 mn=5 mx=80 trend=N  A:1.209 B:1.537  avg=1.373  B pass
+  [150/180] TP=2.0 mn=5 mx=80 trend=Y W1=10  A:1.169 B:1.019  avg=1.094  fail
+  [151/180] TP=2.0 mn=5 mx=80 trend=Y W1=20  A:1.347 B:1.153  avg=1.250  fail
+  [152/180] TP=2.0 mn=5 mx=80 trend=Y W1=26  A:1.491 B:1.15  avg=1.321  A pass
+  [153/180] TP=2.0 mn=5 mx=100 trend=N  A:1.217 B:1.537  avg=1.377  B pass
+  [154/180] TP=2.0 mn=5 mx=100 trend=Y W1=10  A:1.169 B:1.019  avg=1.094  fail
+  [155/180] TP=2.0 mn=5 mx=100 trend=Y W1=20  A:1.347 B:1.153  avg=1.250  fail
+  [156/180] TP=2.0 mn=5 mx=100 trend=Y W1=26  A:1.491 B:1.15  avg=1.321  A pass
+  [157/180] TP=2.0 mn=10 mx=60 trend=N  A:1.285 B:1.588  avg=1.437  BOTH PASS
+  [158/180] TP=2.0 mn=10 mx=60 trend=Y W1=10  A:1.26 B:1.045  avg=1.152  fail
+  [159/180] TP=2.0 mn=10 mx=60 trend=Y W1=20  A:1.425 B:1.18  avg=1.302  A pass
+  [160/180] TP=2.0 mn=10 mx=60 trend=Y W1=26  A:1.586 B:1.176  avg=1.381  A pass
+  [161/180] TP=2.0 mn=10 mx=80 trend=N  A:1.259 B:1.588  avg=1.423  B pass
+  [162/180] TP=2.0 mn=10 mx=80 trend=Y W1=10  A:1.214 B:1.05  avg=1.132  fail
+  [163/180] TP=2.0 mn=10 mx=80 trend=Y W1=20  A:1.397 B:1.184  avg=1.290  A pass
+  [164/180] TP=2.0 mn=10 mx=80 trend=Y W1=26  A:1.551 B:1.181  avg=1.366  A pass
+  [165/180] TP=2.0 mn=10 mx=100 trend=N  A:1.267 B:1.588  avg=1.427  B pass
+  [166/180] TP=2.0 mn=10 mx=100 trend=Y W1=10  A:1.214 B:1.05  avg=1.132  fail
+  [167/180] TP=2.0 mn=10 mx=100 trend=Y W1=20  A:1.397 B:1.184  avg=1.290  A pass
+  [168/180] TP=2.0 mn=10 mx=100 trend=Y W1=26  A:1.551 B:1.181  avg=1.366  A pass
+  [169/180] TP=2.0 mn=15 mx=60 trend=N  A:1.235 B:1.603  avg=1.419  B pass
+  [170/180] TP=2.0 mn=15 mx=60 trend=Y W1=10  A:1.273 B:1.092  avg=1.183  fail
+  [171/180] TP=2.0 mn=15 mx=60 trend=Y W1=20  A:1.352 B:1.288  avg=1.320  fail
+  [172/180] TP=2.0 mn=15 mx=60 trend=Y W1=26  A:1.437 B:1.281  avg=1.359  fail
+  [173/180] TP=2.0 mn=15 mx=80 trend=N  A:1.204 B:1.603  avg=1.403  B pass
+  [174/180] TP=2.0 mn=15 mx=80 trend=Y W1=10  A:1.215 B:1.098  avg=1.157  fail
+  [175/180] TP=2.0 mn=15 mx=80 trend=Y W1=20  A:1.319 B:1.293  avg=1.306  fail
+  [176/180] TP=2.0 mn=15 mx=80 trend=Y W1=26  A:1.4 B:1.286  avg=1.343  fail
+  [177/180] TP=2.0 mn=15 mx=100 trend=N  A:1.214 B:1.603  avg=1.409  B pass
+  [178/180] TP=2.0 mn=15 mx=100 trend=Y W1=10  A:1.215 B:1.098  avg=1.157  fail
+  [179/180] TP=2.0 mn=15 mx=100 trend=Y W1=20  A:1.319 B:1.293  avg=1.306  fail
+  [180/180] TP=2.0 mn=15 mx=100 trend=Y W1=26  A:1.4 B:1.286  avg=1.343  fail
+
+
+############################################################
+# TOP 5 GBPUSD CONFIGURATIONS (both periods PASS net of costs)
+############################################################
+
+
+#1: TP=1.5x  range=15-60pips  trend_filter=ON W1=26
+  Period A: OOS PF=1.638  N=102  BS=99.0%  WR=0.56
+            MaxDD=0.73%  MaxLossStreak=6
+  Period B: OOS PF=1.829  N=82  BS=99.6%  WR=0.567
+            MaxDD=0.69%  MaxLossStreak=6
+  Avg OOS PF: 1.733
+
+#2: TP=1.5x  range=15-80pips  trend_filter=ON W1=26
+  Period A: OOS PF=1.589  N=104  BS=99.0%  WR=0.55
+            MaxDD=0.73%  MaxLossStreak=6
+  Period B: OOS PF=1.835  N=83  BS=99.5%  WR=0.576
+            MaxDD=0.69%  MaxLossStreak=6
+  Avg OOS PF: 1.712
+
+#3: TP=1.5x  range=15-100pips  trend_filter=ON W1=26
+  Period A: OOS PF=1.589  N=104  BS=99.0%  WR=0.554
+            MaxDD=0.73%  MaxLossStreak=6
+  Period B: OOS PF=1.835  N=83  BS=99.6%  WR=0.576
+            MaxDD=0.69%  MaxLossStreak=6
+  Avg OOS PF: 1.712
+
+#4: TP=1.25x  range=15-60pips  trend_filter=ON W1=26
+  Period A: OOS PF=1.573  N=102  BS=98.6%  WR=0.587
+            MaxDD=0.83%  MaxLossStreak=6
+  Period B: OOS PF=1.806  N=82  BS=99.6%  WR=0.6
+            MaxDD=0.74%  MaxLossStreak=6
+  Avg OOS PF: 1.69
+
+#5: TP=1.25x  range=15-80pips  trend_filter=ON W1=26
+  Period A: OOS PF=1.524  N=104  BS=99.1%  WR=0.577
+            MaxDD=0.83%  MaxLossStreak=6
+  Period B: OOS PF=1.847  N=83  BS=99.6%  WR=0.609
+            MaxDD=0.74%  MaxLossStreak=6
+  Avg OOS PF: 1.686
+
+Results saved to C:\Users\hamza\Downloads\Ai projects\Pine script signal bot\results\gbpusd_top.json

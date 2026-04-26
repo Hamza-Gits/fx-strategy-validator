@@ -1,0 +1,227 @@
+{
+  "top_5": [
+    {
+      "params": {
+        "tp_mult": 1.5,
+        "min_range": 15,
+        "max_range": 60,
+        "use_trend": true,
+        "w1_ema": 26
+      },
+      "avg_oos_pf": 1.733,
+      "period_a": {
+        "passed": true,
+        "is_pf": 1.323,
+        "oos_pf": 1.638,
+        "oos_n": 102,
+        "bootstrap": 99.0,
+        "dsr_p": 0.0,
+        "total_trades": 361,
+        "risk": {
+          "max_dd_pct": 0.73,
+          "max_loss_streak": 6,
+          "avg_win": 132.89,
+          "avg_loss": -95.7,
+          "win_rate": 0.56,
+          "expectancy": 32.23
+        }
+      },
+      "period_b": {
+        "passed": true,
+        "is_pf": 1.171,
+        "oos_pf": 1.829,
+        "oos_n": 82,
+        "bootstrap": 99.6,
+        "dsr_p": 0.0,
+        "total_trades": 297,
+        "risk": {
+          "max_dd_pct": 0.69,
+          "max_loss_streak": 6,
+          "avg_win": 118.07,
+          "avg_loss": -97.34,
+          "win_rate": 0.567,
+          "expectancy": 24.73
+        }
+      }
+    },
+    {
+      "params": {
+        "tp_mult": 1.5,
+        "min_range": 15,
+        "max_range": 80,
+        "use_trend": true,
+        "w1_ema": 26
+      },
+      "avg_oos_pf": 1.712,
+      "period_a": {
+        "passed": true,
+        "is_pf": 1.315,
+        "oos_pf": 1.589,
+        "oos_n": 104,
+        "bootstrap": 99.0,
+        "dsr_p": 0.0,
+        "total_trades": 367,
+        "risk": {
+          "max_dd_pct": 0.73,
+          "max_loss_streak": 6,
+          "avg_win": 132.89,
+          "avg_loss": -94.61,
+          "win_rate": 0.55,
+          "expectancy": 30.41
+        }
+      },
+      "period_b": {
+        "passed": true,
+        "is_pf": 1.118,
+        "oos_pf": 1.835,
+        "oos_n": 83,
+        "bootstrap": 99.5,
+        "dsr_p": 0.0,
+        "total_trades": 304,
+        "risk": {
+          "max_dd_pct": 0.69,
+          "max_loss_streak": 6,
+          "avg_win": 116.67,
+          "avg_loss": -97.34,
+          "win_rate": 0.576,
+          "expectancy": 25.95
+        }
+      }
+    },
+    {
+      "params": {
+        "tp_mult": 1.5,
+        "min_range": 15,
+        "max_range": 100,
+        "use_trend": true,
+        "w1_ema": 26
+      },
+      "avg_oos_pf": 1.712,
+      "period_a": {
+        "passed": true,
+        "is_pf": 1.316,
+        "oos_pf": 1.589,
+        "oos_n": 104,
+        "bootstrap": 99.0,
+        "dsr_p": 0.0,
+        "total_trades": 372,
+        "risk": {
+          "max_dd_pct": 0.73,
+          "max_loss_streak": 6,
+          "avg_win": 133.05,
+          "avg_loss": -94.61,
+          "win_rate": 0.554,
+          "expectancy": 31.42
+        }
+      },
+      "period_b": {
+        "passed": true,
+        "is_pf": 1.114,
+        "oos_pf": 1.835,
+        "oos_n": 83,
+        "bootstrap": 99.6,
+        "dsr_p": 0.0,
+        "total_trades": 306,
+        "risk": {
+          "max_dd_pct": 0.69,
+          "max_loss_streak": 6,
+          "avg_win": 116.67,
+          "avg_loss": -97.34,
+          "win_rate": 0.576,
+          "expectancy": 25.95
+        }
+      }
+    },
+    {
+      "params": {
+        "tp_mult": 1.25,
+        "min_range": 15,
+        "max_range": 60,
+        "use_trend": true,
+        "w1_ema": 26
+      },
+      "avg_oos_pf": 1.69,
+      "period_a": {
+        "passed": true,
+        "is_pf": 1.381,
+        "oos_pf": 1.573,
+        "oos_n": 102,
+        "bootstrap": 98.6,
+        "dsr_p": 0.0,
+        "total_trades": 361,
+        "risk": {
+          "max_dd_pct": 0.83,
+          "max_loss_streak": 6,
+          "avg_win": 114.76,
+          "avg_loss": -96.39,
+          "win_rate": 0.587,
+          "expectancy": 27.59
+        }
+      },
+      "period_b": {
+        "passed": true,
+        "is_pf": 1.122,
+        "oos_pf": 1.806,
+        "oos_n": 82,
+        "bootstrap": 99.6,
+        "dsr_p": 0.0,
+        "total_trades": 297,
+        "risk": {
+          "max_dd_pct": 0.74,
+          "max_loss_streak": 6,
+          "avg_win": 102.94,
+          "avg_loss": -99.83,
+          "win_rate": 0.6,
+          "expectancy": 21.83
+        }
+      }
+    },
+    {
+      "params": {
+        "tp_mult": 1.25,
+        "min_range": 15,
+        "max_range": 80,
+        "use_trend": true,
+        "w1_ema": 26
+      },
+      "avg_oos_pf": 1.686,
+      "period_a": {
+        "passed": true,
+        "is_pf": 1.371,
+        "oos_pf": 1.524,
+        "oos_n": 104,
+        "bootstrap": 99.1,
+        "dsr_p": 0.0,
+        "total_trades": 367,
+        "risk": {
+          "max_dd_pct": 0.83,
+          "max_loss_streak": 6,
+          "avg_win": 114.76,
+          "avg_loss": -95.2,
+          "win_rate": 0.577,
+          "expectancy": 25.86
+        }
+      },
+      "period_b": {
+        "passed": true,
+        "is_pf": 1.07,
+        "oos_pf": 1.847,
+        "oos_n": 83,
+        "bootstrap": 99.6,
+        "dsr_p": 0.0,
+        "total_trades": 304,
+        "risk": {
+          "max_dd_pct": 0.74,
+          "max_loss_streak": 6,
+          "avg_win": 103.54,
+          "avg_loss": -99.83,
+          "win_rate": 0.609,
+          "expectancy": 23.96
+        }
+      }
+    }
+  ],
+  "total_passing": 55,
+  "cost_pips": 2.0,
+  "timestamp": "2026-04-26T15:09:16.066284+00:00"
+}
