@@ -1,0 +1,25 @@
+{
+  "converged": true,
+  "iteration": 1,
+  "strategy": "london_breakout",
+  "note": "Baseline params already pass both periods. Full grid search running to find optimal params.",
+  "params": {
+    "tp_mult": 1.5,
+    "trend_filter": 0,
+    "w1_ema": 20,
+    "min_range_pips": 10,
+    "max_range_pips": 80
+  },
+  "period_a": {
+    "start": "2015-01-01", "end": "2019-12-31",
+    "is_pf": 1.587, "oos_pf": 1.283, "oos_n": 536,
+    "bootstrap_pct": 99.6, "p_value": 0.0000, "passed": true
+  },
+  "period_b": {
+    "start": "2020-01-01", "end": "2024-12-31",
+    "note": "Data starts 2021-01-04 due to CSV split",
+    "is_pf": 1.511, "oos_pf": 1.850, "oos_n": 456,
+    "bootstrap_pct": 100.0, "p_value": 0.0000, "passed": true
+  },
+  "timestamp": "2026-04-26T10:00:00Z"
+}
