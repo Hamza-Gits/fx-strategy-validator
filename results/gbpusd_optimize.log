@@ -46,3 +46,103 @@
   [ 38/180] TP=1.25 mn=5 mx=60 trend=Y W1=10  A:1.193 B:1.4  avg=1.296  fail
   [ 39/180] TP=1.25 mn=5 mx=60 trend=Y W1=20  A:1.367 B:1.622  avg=1.494  BOTH PASS
   [ 40/180] TP=1.25 mn=5 mx=60 trend=Y W1=26  A:1.478 B:1.689  avg=1.583  BOTH PASS
+  [ 41/180] TP=1.25 mn=5 mx=80 trend=N  A:1.127 B:1.698  avg=1.413  B pass
+  [ 42/180] TP=1.25 mn=5 mx=80 trend=Y W1=10  A:1.145 B:1.438  avg=1.292  fail
+  [ 43/180] TP=1.25 mn=5 mx=80 trend=Y W1=20  A:1.335 B:1.657  avg=1.496  B pass
+  [ 44/180] TP=1.25 mn=5 mx=80 trend=Y W1=26  A:1.442 B:1.724  avg=1.583  BOTH PASS
+  [ 45/180] TP=1.25 mn=5 mx=100 trend=N  A:1.136 B:1.698  avg=1.417  B pass
+  [ 46/180] TP=1.25 mn=5 mx=100 trend=Y W1=10  A:1.145 B:1.438  avg=1.292  fail
+  [ 47/180] TP=1.25 mn=5 mx=100 trend=Y W1=20  A:1.335 B:1.657  avg=1.496  B pass
+  [ 48/180] TP=1.25 mn=5 mx=100 trend=Y W1=26  A:1.442 B:1.724  avg=1.583  BOTH PASS
+  [ 49/180] TP=1.25 mn=10 mx=60 trend=N  A:1.208 B:1.699  avg=1.454  B pass
+  [ 50/180] TP=1.25 mn=10 mx=60 trend=Y W1=10  A:1.247 B:1.369  avg=1.308  fail
+  [ 51/180] TP=1.25 mn=10 mx=60 trend=Y W1=20  A:1.428 B:1.592  avg=1.510  BOTH PASS
+  [ 52/180] TP=1.25 mn=10 mx=60 trend=Y W1=26  A:1.55 B:1.659  avg=1.605  BOTH PASS
+  [ 53/180] TP=1.25 mn=10 mx=80 trend=N  A:1.18 B:1.715  avg=1.448  B pass
+  [ 54/180] TP=1.25 mn=10 mx=80 trend=Y W1=10  A:1.195 B:1.406  avg=1.300  fail
+  [ 55/180] TP=1.25 mn=10 mx=80 trend=Y W1=20  A:1.394 B:1.627  avg=1.510  BOTH PASS
+  [ 56/180] TP=1.25 mn=10 mx=80 trend=Y W1=26  A:1.51 B:1.695  avg=1.603  BOTH PASS
+  [ 57/180] TP=1.25 mn=10 mx=100 trend=N  A:1.189 B:1.715  avg=1.452  B pass
+  [ 58/180] TP=1.25 mn=10 mx=100 trend=Y W1=10  A:1.195 B:1.406  avg=1.300  fail
+  [ 59/180] TP=1.25 mn=10 mx=100 trend=Y W1=20  A:1.394 B:1.627  avg=1.510  BOTH PASS
+  [ 60/180] TP=1.25 mn=10 mx=100 trend=Y W1=26  A:1.51 B:1.695  avg=1.603  BOTH PASS
+  [ 61/180] TP=1.25 mn=15 mx=60 trend=N  A:1.253 B:1.747  avg=1.500  B pass
+  [ 62/180] TP=1.25 mn=15 mx=60 trend=Y W1=10  A:1.359 B:1.438  avg=1.398  fail
+  [ 63/180] TP=1.25 mn=15 mx=60 trend=Y W1=20  A:1.461 B:1.729  avg=1.595  BOTH PASS
+  [ 64/180] TP=1.25 mn=15 mx=60 trend=Y W1=26  A:1.573 B:1.806  avg=1.690  BOTH PASS
+  [ 65/180] TP=1.25 mn=15 mx=80 trend=N  A:1.217 B:1.765  avg=1.491  B pass
+  [ 66/180] TP=1.25 mn=15 mx=80 trend=Y W1=10  A:1.286 B:1.482  avg=1.384  fail
+  [ 67/180] TP=1.25 mn=15 mx=80 trend=Y W1=20  A:1.419 B:1.77  avg=1.595  BOTH PASS
+  [ 68/180] TP=1.25 mn=15 mx=80 trend=Y W1=26  A:1.524 B:1.847  avg=1.685  BOTH PASS
+  [ 69/180] TP=1.25 mn=15 mx=100 trend=N  A:1.229 B:1.765  avg=1.497  B pass
+  [ 70/180] TP=1.25 mn=15 mx=100 trend=Y W1=10  A:1.286 B:1.482  avg=1.384  fail
+  [ 71/180] TP=1.25 mn=15 mx=100 trend=Y W1=20  A:1.419 B:1.77  avg=1.595  B pass
+  [ 72/180] TP=1.25 mn=15 mx=100 trend=Y W1=26  A:1.524 B:1.847  avg=1.685  BOTH PASS
+  [ 73/180] TP=1.5 mn=5 mx=60 trend=N  A:1.196 B:1.775  avg=1.486  B pass
+  [ 74/180] TP=1.5 mn=5 mx=60 trend=Y W1=10  A:1.276 B:1.485  avg=1.381  B pass
+  [ 75/180] TP=1.5 mn=5 mx=60 trend=Y W1=20  A:1.434 B:1.585  avg=1.510  BOTH PASS
+  [ 76/180] TP=1.5 mn=5 mx=60 trend=Y W1=26  A:1.587 B:1.652  avg=1.619  BOTH PASS
+  [ 77/180] TP=1.5 mn=5 mx=80 trend=N  A:1.17 B:1.774  avg=1.472  B pass
+  [ 78/180] TP=1.5 mn=5 mx=80 trend=Y W1=10  A:1.227 B:1.491  avg=1.359  B pass
+  [ 79/180] TP=1.5 mn=5 mx=80 trend=Y W1=20  A:1.403 B:1.59  avg=1.497  BOTH PASS
+  [ 80/180] TP=1.5 mn=5 mx=80 trend=Y W1=26  A:1.549 B:1.657  avg=1.603  BOTH PASS
+  [ 81/180] TP=1.5 mn=5 mx=100 trend=N  A:1.179 B:1.774  avg=1.477  B pass
+  [ 82/180] TP=1.5 mn=5 mx=100 trend=Y W1=10  A:1.227 B:1.491  avg=1.359  B pass
+  [ 83/180] TP=1.5 mn=5 mx=100 trend=Y W1=20  A:1.403 B:1.59  avg=1.497  BOTH PASS
+  [ 84/180] TP=1.5 mn=5 mx=100 trend=Y W1=26  A:1.549 B:1.657  avg=1.603  BOTH PASS
+  [ 85/180] TP=1.5 mn=10 mx=60 trend=N  A:1.25 B:1.844  avg=1.547  B pass
+  [ 86/180] TP=1.5 mn=10 mx=60 trend=Y W1=10  A:1.332 B:1.54  avg=1.436  B pass
+  [ 87/180] TP=1.5 mn=10 mx=60 trend=Y W1=20  A:1.494 B:1.638  avg=1.566  BOTH PASS
+  [ 88/180] TP=1.5 mn=10 mx=60 trend=Y W1=26  A:1.66 B:1.708  avg=1.684  BOTH PASS
+  [ 89/180] TP=1.5 mn=10 mx=80 trend=N  A:1.222 B:1.843  avg=1.532  B pass
+  [ 90/180] TP=1.5 mn=10 mx=80 trend=Y W1=10  A:1.279 B:1.546  avg=1.413  B pass
+  [ 91/180] TP=1.5 mn=10 mx=80 trend=Y W1=20  A:1.46 B:1.643  avg=1.551  BOTH PASS
+  [ 92/180] TP=1.5 mn=10 mx=80 trend=Y W1=26  A:1.619 B:1.713  avg=1.666  BOTH PASS
+  [ 93/180] TP=1.5 mn=10 mx=100 trend=N  A:1.231 B:1.843  avg=1.537  B pass
+  [ 94/180] TP=1.5 mn=10 mx=100 trend=Y W1=10  A:1.279 B:1.546  avg=1.413  B pass
+  [ 95/180] TP=1.5 mn=10 mx=100 trend=Y W1=20  A:1.46 B:1.643  avg=1.551  BOTH PASS
+  [ 96/180] TP=1.5 mn=10 mx=100 trend=Y W1=26  A:1.619 B:1.713  avg=1.666  BOTH PASS
+  [ 97/180] TP=1.5 mn=15 mx=60 trend=N  A:1.283 B:1.859  avg=1.571  B pass
+  [ 98/180] TP=1.5 mn=15 mx=60 trend=Y W1=10  A:1.473 B:1.601  avg=1.537  BOTH PASS
+  [ 99/180] TP=1.5 mn=15 mx=60 trend=Y W1=20  A:1.541 B:1.749  avg=1.645  BOTH PASS
+  [100/180] TP=1.5 mn=15 mx=60 trend=Y W1=26  A:1.638 B:1.829  avg=1.733  BOTH PASS
+  [101/180] TP=1.5 mn=15 mx=80 trend=N  A:1.248 B:1.858  avg=1.553  B pass
+  [102/180] TP=1.5 mn=15 mx=80 trend=Y W1=10  A:1.396 B:1.608  avg=1.502  B pass
+  [103/180] TP=1.5 mn=15 mx=80 trend=Y W1=20  A:1.498 B:1.755  avg=1.627  BOTH PASS
+  [104/180] TP=1.5 mn=15 mx=80 trend=Y W1=26  A:1.589 B:1.835  avg=1.712  BOTH PASS
+  [105/180] TP=1.5 mn=15 mx=100 trend=N  A:1.259 B:1.858  avg=1.558  B pass
+  [106/180] TP=1.5 mn=15 mx=100 trend=Y W1=10  A:1.396 B:1.608  avg=1.502  B pass
+  [107/180] TP=1.5 mn=15 mx=100 trend=Y W1=20  A:1.498 B:1.755  avg=1.627  BOTH PASS
+  [108/180] TP=1.5 mn=15 mx=100 trend=Y W1=26  A:1.589 B:1.835  avg=1.712  BOTH PASS
+  [109/180] TP=1.75 mn=5 mx=60 trend=N  A:1.238 B:1.623  avg=1.430  B pass
+  [110/180] TP=1.75 mn=5 mx=60 trend=Y W1=10  A:1.278 B:1.149  avg=1.214  fail
+  [111/180] TP=1.75 mn=5 mx=60 trend=Y W1=20  A:1.462 B:1.342  avg=1.402  A pass
+  [112/180] TP=1.75 mn=5 mx=60 trend=Y W1=26  A:1.609 B:1.407  avg=1.508  A pass
+  [113/180] TP=1.75 mn=5 mx=80 trend=N  A:1.213 B:1.623  avg=1.418  B pass
+  [114/180] TP=1.75 mn=5 mx=80 trend=Y W1=10  A:1.231 B:1.154  avg=1.192  fail
+  [115/180] TP=1.75 mn=5 mx=80 trend=Y W1=20  A:1.432 B:1.346  avg=1.389  A pass
+  [116/180] TP=1.75 mn=5 mx=80 trend=Y W1=26  A:1.573 B:1.411  avg=1.492  A pass
+  [117/180] TP=1.75 mn=5 mx=100 trend=N  A:1.221 B:1.623  avg=1.422  B pass
+  [118/180] TP=1.75 mn=5 mx=100 trend=Y W1=10  A:1.231 B:1.154  avg=1.192  fail
+  [119/180] TP=1.75 mn=5 mx=100 trend=Y W1=20  A:1.432 B:1.346  avg=1.389  A pass
+  [120/180] TP=1.75 mn=5 mx=100 trend=Y W1=26  A:1.573 B:1.411  avg=1.492  A pass
+  [121/180] TP=1.75 mn=10 mx=60 trend=N  A:1.292 B:1.68  avg=1.486  BOTH PASS
+  [122/180] TP=1.75 mn=10 mx=60 trend=Y W1=10  A:1.33 B:1.186  avg=1.258  fail
+  [123/180] TP=1.75 mn=10 mx=60 trend=Y W1=20  A:1.52 B:1.381  avg=1.450  A pass
+  [124/180] TP=1.75 mn=10 mx=60 trend=Y W1=26  A:1.679 B:1.448  avg=1.563  A pass
+  [125/180] TP=1.75 mn=10 mx=80 trend=N  A:1.264 B:1.679  avg=1.472  B pass
+  [126/180] TP=1.75 mn=10 mx=80 trend=Y W1=10  A:1.28 B:1.191  avg=1.236  fail
+  [127/180] TP=1.75 mn=10 mx=80 trend=Y W1=20  A:1.487 B:1.386  avg=1.437  A pass
+  [128/180] TP=1.75 mn=10 mx=80 trend=Y W1=26  A:1.64 B:1.453  avg=1.546  A pass
+  [129/180] TP=1.75 mn=10 mx=100 trend=N  A:1.273 B:1.679  avg=1.476  B pass
+  [130/180] TP=1.75 mn=10 mx=100 trend=Y W1=10  A:1.28 B:1.191  avg=1.236  fail
+  [131/180] TP=1.75 mn=10 mx=100 trend=Y W1=20  A:1.487 B:1.386  avg=1.437  A pass
+  [132/180] TP=1.75 mn=10 mx=100 trend=Y W1=26  A:1.64 B:1.453  avg=1.546  A pass
+  [133/180] TP=1.75 mn=15 mx=60 trend=N  A:1.286 B:1.693  avg=1.490  B pass
+  [134/180] TP=1.75 mn=15 mx=60 trend=Y W1=10  A:1.413 B:1.186  avg=1.300  fail
+  [135/180] TP=1.75 mn=15 mx=60 trend=Y W1=20  A:1.516 B:1.449  avg=1.482  A pass
+  [136/180] TP=1.75 mn=15 mx=60 trend=Y W1=26  A:1.6 B:1.524  avg=1.562  BOTH PASS
+  [137/180] TP=1.75 mn=15 mx=80 trend=N  A:1.253 B:1.692  avg=1.472  B pass
+  [138/180] TP=1.75 mn=15 mx=80 trend=Y W1=10  A:1.345 B:1.192  avg=1.268  fail
+  [139/180] TP=1.75 mn=15 mx=80 trend=Y W1=20  A:1.477 B:1.454  avg=1.466  A pass
+  [140/180] TP=1.75 mn=15 mx=80 trend=Y W1=26  A:1.555 B:1.529  avg=1.542  BOTH PASS
