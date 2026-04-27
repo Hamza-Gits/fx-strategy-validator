@@ -9,7 +9,9 @@
       "Bash(copy \"C:\\\\Users\\\\hamza\\\\Downloads\\\\Ai projects\\\\CLAUDE MT5\\\\Script\\\\LondonBreakout_GBPUSD_v2_1.mq5\" \"C:\\\\Users\\\\hamza\\\\AppData\\\\Roaming\\\\MetaQuotes\\\\Terminal\\\\D0E8209F77C8CF37AD8BF550E51FF075\\\\MQL5\\\\Experts\\\\LondonBreakout_GBPUSD.mq5\" /Y)",
       "Bash(del \"C:\\\\Users\\\\hamza\\\\AppData\\\\Roaming\\\\MetaQuotes\\\\Terminal\\\\D0E8209F77C8CF37AD8BF550E51FF075\\\\MQL5\\\\Experts\\\\LondonBreakout_GBPUSD.ex5\")",
       "Bash(python -c \"import numpy, pandas, scipy; print\\('deps OK'\\)\")",
-      "Bash(python validation_harness/strategy_template.py --start 2015-01-01 --end 2019-12-31 --data-dir ./data --label \"Test Iter 1 - Period A\" --w1-ema 12 --d1-ema 20 --atr 14 --sl-mult 2.0 --tp-mult 3.0)"
+      "Bash(python validation_harness/strategy_template.py --start 2015-01-01 --end 2019-12-31 --data-dir ./data --label \"Test Iter 1 - Period A\" --w1-ema 12 --d1-ema 20 --atr 14 --sl-mult 2.0 --tp-mult 3.0)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
