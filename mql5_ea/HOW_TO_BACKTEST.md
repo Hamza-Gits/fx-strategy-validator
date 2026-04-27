@@ -1,44 +1,53 @@
-# How to Backtest LondonBreakout_v1.mq5 on MT5
+# How to Backtest LondonBreakout_v3.mq5 on MT5
 
 ## Step 1: Install the EA
 
 1. Open MetaTrader 5
 2. Click **File → Open Data Folder**
 3. Navigate to `MQL5/Experts/`
-4. Copy `LondonBreakout_v1.mq5` into this folder
+4. Copy `LondonBreakout_v3.mq5` into this folder
 5. In MT5, open **Navigator** panel (Ctrl+N) → Experts
-6. Right-click `LondonBreakout_v1` → **Compile**
+6. Right-click `LondonBreakout_v3` → **Compile**
 7. Should compile with 0 errors, 0 warnings
 
 ## Step 2: Run Strategy Tester Backtest
 
 1. **View → Strategy Tester** (Ctrl+R)
 2. Configure:
-   - **Expert:** LondonBreakout_v1
+   - **Expert:** LondonBreakout_v3
    - **Symbol:** GBPUSD
    - **Timeframe:** H1
    - **Date Range:** 2015.01.01 - 2024.12.31 (or 2025 forward test)
    - **Modeling:** Every tick based on real ticks (most accurate) OR M1 OHLC (faster)
-   - **Initial Deposit:** 10000
-   - **Leverage:** 1:30 (or your prop firm leverage)
+   - **Initial Deposit:** 25000 (matches Python backtest)
+   - **Leverage:** 1:100 (or your prop firm leverage)
 3. Click **Inputs** tab — verify all params match defaults:
    - InpTPMultiplier = 1.5
    - InpMinRangePips = 15
    - InpMaxRangePips = 60
    - InpUseTrendFilter = true
    - InpW1EmaPeriod = 26
-   - InpRiskPercent = 0.5
+   - InpUseProgressiveRisk = true (v3 new)
+   - InpRiskPhase1Pct = 0.5 (Phase 1: 0-30 days)
+   - InpRiskPhase2Pct = 1.0 (Phase 2: 31-90 days)
+   - InpRiskPhase3Pct = 1.5 (Phase 3: 91+ days)
+   - InpDailyLossLimitPct = 3.5 (Safety Layer 1)
+   - InpTrailingDDPct = 8.0 (Safety Layer 2)
 4. Click **Start**
 
 ## Step 3: Expected Results
 
-Based on Python verification of the same logic:
+Based on Python backtest with 1.0-pip cost model ($25k account):
 
-**Full period 2015-2024 (locked params):**
-- Trade count: ~600-700
-- Profit Factor: 1.4-1.6 (with 2-pip cost model)
-- Win Rate: ~52-53%
-- Trade frequency: 60-70 per year (~5/month)
+**Full period 2015-2024 (locked params, $25k, 1:100, progressive risk):**
+- Trade count: ~667
+- Final equity: ~$197,200 (CAGR 23.1%, Max DD 19.1%)
+- Profit Factor: 1.733 (OOS combined, validated via DSR p<0.0005)
+- Win Rate: ~56-57%
+- Trade frequency: ~66 trades/year (~5-6/month)
+
+**If using fixed 0.5% risk (no progressive scaling):**
+- Final equity will be lower (~$110k-120k at year 10)
 
 **Note:** Backtest results may vary slightly from Python due to:
 - Tick-level precision in MT5 vs hourly bars in Python
@@ -50,20 +59,28 @@ Based on Python verification of the same logic:
 In the Strategy Tester, check the **Journal** tab. You should see:
 
 ```
-[YYYY.MM.DD HH:MM:SS GMT] EA Initialized | Symbol=GBPUSD | PipSize=0.00010 ...
-[YYYY.MM.DD HH:MM:SS GMT] Asian range computed: H=1.23456 L=1.23000 Range=45.6 pips (bars=7)
-[YYYY.MM.DD HH:MM:SS GMT] STATE: WAITING -> RANGE_SET | trigger: Asian range valid: 45.6 pips
-[YYYY.MM.DD HH:MM:SS GMT] LONG breakout: close=1.23500 > AH=1.23456, EMA=1.21000
-[YYYY.MM.DD HH:MM:SS GMT] ENTERED LONG | lots=0.05 | entry=1.23456 | SL=1.23000 | TP=1.24140
-[YYYY.MM.DD HH:MM:SS GMT] EOD exit triggered at hour 17 GMT
+[2015.01.05 00:00:00] GMT offset: 7200 sec (2.00 hours)
+[2015.01.05 00:00:00] EA v2.0 Init | GBPUSD | PipSize=0.00010 | PipValue=1.00
+[2015.01.05 00:00:00] Strategy: TP=1.50x | Range 15-60 | EMA-26 filter=ON
+[2015.01.05 00:00:00] Risk=0.50% | DailyDD=3.50% | TrailingDD=8.00% | CSV=ON
+[2015.01.05 07:30:00] Asian range: H=1.51234 L=1.50890 R=34.4 pips (7 bars)
+[2015.01.05 07:30:00] STATE: WAITING -> RANGE_SET | trigger: Asian range valid: 34.4 pips
+[2015.01.05 08:00:00] LONG breakout: close=1.51300 > AH=1.51234
+[2015.01.05 08:00:00] Sizing: phase=1 risk=0.50% equity=$25000.00 risk_$=$125.00 stop=34.4 raw=0.36 final=0.01
+[2015.01.05 08:00:00] ENTERED LONG | lots=0.01 | expected=1.51234 | actual=1.51235 | spread=1.60 | SL=1.50890 | TP=1.52366
+[2015.01.05 17:00:00] EOD exit at hour 17 GMT
+[2015.01.05 17:00:00] Closed #2147483648 | reason: EOD exit (17:00 GMT)
+[2015.01.06 00:00:00] === DAILY RESET (00:00 GMT) ===
 ```
 
 Verify:
-- ✅ Asian range computed at 07:00 GMT
-- ✅ Entry price = Asian high/low (NOT bar close)
+- ✅ GMT offset detected correctly (check journal first line)
+- ✅ Asian range computed during 07:00 GMT window
+- ✅ Entry triggered on first H1 close outside range
 - ✅ SL = opposite range boundary
 - ✅ TP = entry + 1.5 × range
 - ✅ EOD exit fires at 17:00 GMT
+- ✅ Phase progression message appears after 30/90 days
 
 ## Step 5: GMT Offset Verification
 
@@ -104,26 +121,71 @@ Before going live on The5ers $10k challenge:
 
 ## Troubleshooting
 
-**No trades in backtest:**
-- Check trend filter — try setting `InpUseTrendFilter = false` to see if EMA filter is too restrictive
-- Check date range — needs at least 2 weeks for W1 EMA to seed
+### No trades in backtest
+**Symptom:** Backtest runs but 0 trades executed
 
-**Trade count much lower than Python (e.g., < 100 over 10 years):**
-- Likely `iMA` PERIOD_W1 isn't returning weekly EMA correctly
-- Check journal for "W1 EMA-26 refreshed: X.XXXXX" messages
+**Checks:**
+1. Verify GMT offset is detected (check journal first line)
+   - Should show `GMT offset: 7200 sec (2.00 hours)` or similar
+   - If shows 0, set `InpGMTOffsetHours = 2` manually
+2. Verify GBPUSD data exists for your date range
+   - Download H1 history: right-click chart → Reload
+3. Try disabling trend filter temporarily:
+   - Set `InpUseTrendFilter = false` 
+   - If trades appear, W1 EMA is too restrictive for this data
 
-**EOD exit not firing:**
-- Verify GMT offset detection in journal
-- Check if broker has 17:00 GMT bar (should always exist for forex)
+### Trade count much lower than Python (< 100 over 10 years)
+**Likely cause:** W1 EMA not initialized properly in backtest
 
-## Support Files
+**Fix:**
+1. Start backtest date 1-2 months EARLIER than 2015.01.01 to seed EMA
+   - Try 2014.11.01 → 2024.12.31
+2. Watch journal for message: `W1 EMA-26 refreshed: X.XXXXX`
+   - If absent, check `g_w1_ema_handle` creation in OnInit
 
-- `LondonBreakout_v1.mq5` — Main EA source code
-- `ARCHITECTURE.md` — Council-approved design specification
-- `../STRATEGY_REPORT.md` — Full strategy validation report
-- `../verify_ea_logic.py` — Python verification script
+### "Expert compiled with errors" or crashes
+**Symptom:** Backtest won't start
+
+**Common fixes:**
+1. Check MQL5 version in MT5 (Tools → Options → Expert Advisors → check "Allow live trading")
+2. Rebuild: File → Recent Projects → right-click → Rebuild
+3. Check Trade.mqh library exists (should auto-include from standard)
+
+### Profit Factor doesn't match Python (~1.2 vs 1.73)
+**Likely causes:**
+1. Cost modeling — backtest models 1.0 pip, real spreads may be 1-2 pips higher
+2. W1 EMA filter too strict — too many entries filtered out
+3. Phase progression — if backtest is short (< 30 days), all trades at 0.5% risk
+   - Full 10-year backtest should show phase transitions in journal
+
+## Step 5: CSV Trade Log (v3 NEW)
+
+During backtest, every trade is automatically logged to:
+```
+MQL5/Files/LondonBreakout_trades.csv
+```
+
+Download this file after backtest to analyze:
+- Entry/exit times (GMT)
+- Slippage (expected vs actual)
+- PnL per trade
+- Exit reasons (TP, SL, EOD)
+- Duration in minutes
+
+This is your live performance audit trail.
 
 ---
 
-**Status:** EA ready for MT5 backtest  
-**Last Verified:** Python logic match confirmed (PF 1.4+ with 2-pip cost model)
+## Support Files
+
+- `LondonBreakout_v3.mq5` — Main EA source code (progressive risk, CSV logging, 4-layer safeguards)
+- `ARCHITECTURE.md` — Council-approved design specification (state machine, GMT timing, safety layers)
+- `../STRATEGY_REPORT.md` — Full strategy validation report (DSR p<0.0005, 55/180 configs pass)
+- `../ITERATION_REPORT.md` — Position sizing iteration results (Iter 1 council pick)
+- `../iterate_to_target.py` — Python backtest simulator (reproduces $25k → $197k)
+
+---
+
+**Status:** EA v3 ready for MT5 backtest  
+**Last Updated:** 2026-04-27  
+**Verified:** Python logic validated (OOS PF 1.733, DSR p<0.0005)
