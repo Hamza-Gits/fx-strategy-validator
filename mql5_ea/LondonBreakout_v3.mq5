@@ -17,6 +17,15 @@
 //|   - W1 EMA validity guard (skips trade if EMA not seeded)        |
 //|   - Fixed CopyRates signature (time1, time2 — was invalid)       |
 //|                                                                  |
+//|  v3.2 BUG FIX (flatline after 2017):                            |
+//|   - Separated daily DD halt (resets each day) from permanent      |
+//|     halt (trailing DD / kill switch — never resets)               |
+//|   - g_daily_halt resets in DailyReset(); g_permanent_halt does   |
+//|     not. Previously both set g_trading_allowed=false permanently. |
+//|   - Raised default trailing DD 8% -> 15% (personal account).     |
+//|     Phase 3 at 1.5% risk x 6 losses = 9% > old 8% limit.        |
+//|     For The5ers prop firm: set InpTrailingDDPct = 4.0            |
+//|                                                                  |
 //|  BACKTEST RESULT ($25k start, 1:100 leverage, 1pip cost, 10y):   |
 //|     $25,000 -> $197,200  (CAGR 23.1%, MaxDD 19.1%)               |
 //|     2x at 2.67 years, 3x at 4.85 years  (in 3-5y window)         |
@@ -24,8 +33,8 @@
 //|  Validated edge: OOS PF 1.733, DSR p<0.0005, Bootstrap 99%+      |
 //|  Locked params: TP=1.5x, range 15-60 pips, W1 EMA-26             |
 //+------------------------------------------------------------------+
-#property copyright "London Breakout EA v3.1 - optimised"
-#property version   "3.10"
+#property copyright "London Breakout EA v3.2 - flatline bug fixed"
+#property version   "3.20"
 #property strict
 
 #include <Trade\Trade.mqh>
@@ -56,8 +65,8 @@ input double InpRiskPhase3Pct      = 1.5;   // Phase 3 risk (days 91+)
 input int    InpPhase1DurationDays = 30;    // Days before Phase 2 begins
 input int    InpPhase2DurationDays = 60;    // Additional days before Phase 3 begins
 input double InpRiskPercent        = 0.5;   // Manual risk % (used only if Progressive=false)
-input double InpDailyLossLimitPct  = 3.5;   // Daily DD halt threshold
-input double InpTrailingDDPct      = 8.0;   // Trailing DD halt threshold
+input double InpDailyLossLimitPct  = 3.5;   // Daily DD halt — resets each day
+input double InpTrailingDDPct      = 15.0;  // Trailing DD halt — permanent (prop firm: set to 4.0)
 
 input group "=== Safety & Operations ==="
 input bool   InpTradingEnabled    = true;   // Master kill switch (Layer 4)
@@ -88,14 +97,16 @@ double        g_entry_price         = 0;
 double        g_stop_loss           = 0;
 double        g_take_profit         = 0;
 int           g_direction           = 0;
-bool          g_trade_taken_today   = false;
-bool          g_range_computed_today = false;   // v3.1: prevents repeated CopyRates per day
-double        g_peak_equity         = 0;
-double        g_start_day_equity    = 0;
-double        g_w1_ema_value        = 0;
-int           g_w1_ema_cached_week  = -1;
-datetime      g_current_day_gmt     = 0;
-bool          g_trading_allowed     = true;
+bool          g_trade_taken_today    = false;
+bool          g_range_computed_today  = false;   // v3.1: prevents repeated CopyRates per day
+double        g_peak_equity          = 0;
+double        g_start_day_equity     = 0;
+double        g_w1_ema_value         = 0;
+int           g_w1_ema_cached_week   = -1;
+datetime      g_current_day_gmt      = 0;
+// v3.2: split halt flags — daily resets each morning, permanent never resets
+bool          g_daily_halt           = false;   // Layer 1 daily DD — resets in DailyReset()
+bool          g_permanent_halt       = false;   // Layer 2 trailing DD + Layer 4 kill switch
 int           g_w1_ema_handle       = INVALID_HANDLE;
 double        g_pip_size            = 0;
 double        g_pip_value           = 0;
@@ -242,12 +253,13 @@ void SaveStateToGlobals()
    GlobalVariableSet(gv_prefix+"StopLoss",        g_stop_loss);
    GlobalVariableSet(gv_prefix+"TakeProfit",      g_take_profit);
    GlobalVariableSet(gv_prefix+"Direction",       (double)g_direction);
-   GlobalVariableSet(gv_prefix+"TradeTakenToday", g_trade_taken_today   ? 1.0 : 0.0);
+   GlobalVariableSet(gv_prefix+"TradeTakenToday",    g_trade_taken_today    ? 1.0 : 0.0);
    GlobalVariableSet(gv_prefix+"RangeComputedToday", g_range_computed_today ? 1.0 : 0.0);
-   GlobalVariableSet(gv_prefix+"PeakEquity",      g_peak_equity);
-   GlobalVariableSet(gv_prefix+"StartDayEquity",  g_start_day_equity);
-   GlobalVariableSet(gv_prefix+"CurrentDayGMT",   (double)g_current_day_gmt);
-   GlobalVariableSet(gv_prefix+"TradingAllowed",  g_trading_allowed     ? 1.0 : 0.0);
+   GlobalVariableSet(gv_prefix+"PeakEquity",         g_peak_equity);
+   GlobalVariableSet(gv_prefix+"StartDayEquity",     g_start_day_equity);
+   GlobalVariableSet(gv_prefix+"CurrentDayGMT",      (double)g_current_day_gmt);
+   GlobalVariableSet(gv_prefix+"DailyHalt",          g_daily_halt           ? 1.0 : 0.0);
+   GlobalVariableSet(gv_prefix+"PermanentHalt",      g_permanent_halt       ? 1.0 : 0.0);
    GlobalVariableSet(gv_prefix+"ActiveTicket",    (double)g_active_ticket);
    GlobalVariableSet(gv_prefix+"ActualEntry",     g_actual_entry);
    GlobalVariableSet(gv_prefix+"EntrySpread",     g_entry_spread);
@@ -276,12 +288,13 @@ void LoadStateFromGlobals()
    g_stop_loss           = GlobalVariableGet(gv_prefix+"StopLoss");
    g_take_profit         = GlobalVariableGet(gv_prefix+"TakeProfit");
    g_direction           = (int)GlobalVariableGet(gv_prefix+"Direction");
-   g_trade_taken_today   = GlobalVariableGet(gv_prefix+"TradeTakenToday")    > 0.5;
-   g_range_computed_today= GlobalVariableGet(gv_prefix+"RangeComputedToday") > 0.5;
-   g_peak_equity         = GlobalVariableGet(gv_prefix+"PeakEquity");
-   g_start_day_equity    = GlobalVariableGet(gv_prefix+"StartDayEquity");
-   g_current_day_gmt     = (datetime)(long)GlobalVariableGet(gv_prefix+"CurrentDayGMT");
-   g_trading_allowed     = GlobalVariableGet(gv_prefix+"TradingAllowed")     > 0.5;
+   g_trade_taken_today    = GlobalVariableGet(gv_prefix+"TradeTakenToday")    > 0.5;
+   g_range_computed_today = GlobalVariableGet(gv_prefix+"RangeComputedToday") > 0.5;
+   g_peak_equity          = GlobalVariableGet(gv_prefix+"PeakEquity");
+   g_start_day_equity     = GlobalVariableGet(gv_prefix+"StartDayEquity");
+   g_current_day_gmt      = (datetime)(long)GlobalVariableGet(gv_prefix+"CurrentDayGMT");
+   g_daily_halt           = GlobalVariableGet(gv_prefix+"DailyHalt")         > 0.5;
+   g_permanent_halt       = GlobalVariableGet(gv_prefix+"PermanentHalt")     > 0.5;
    g_active_ticket       = (ulong)GlobalVariableGet(gv_prefix+"ActiveTicket");
    g_actual_entry        = GlobalVariableGet(gv_prefix+"ActualEntry");
    g_entry_spread        = GlobalVariableGet(gv_prefix+"EntrySpread");
@@ -505,37 +518,47 @@ void CloseAllPositions(string reason)
 
 bool CheckSafetyLayers()
 {
+   // Layer 4: manual kill switch — permanent halt
    if(!InpTradingEnabled)
    {
       if(g_state == STATE_TRADE_ACTIVE) CloseAllPositions("Layer 4: Manual kill");
-      g_trading_allowed = false;
+      if(!g_permanent_halt) { g_permanent_halt = true; SaveStateToGlobals(); }
       return false;
    }
+
+   // Already permanently halted (trailing DD or kill switch fired previously)
+   if(g_permanent_halt) return false;
 
    double equity = AccountInfoDouble(ACCOUNT_EQUITY);
    if(g_peak_equity <= 0) g_peak_equity = equity;
    if(equity > g_peak_equity) g_peak_equity = equity;
 
+   // Layer 2: trailing DD watermark — PERMANENT halt (never resets)
    double trailing_dd = (g_peak_equity - equity) / g_peak_equity;
    if(trailing_dd > InpTrailingDDPct / 100.0)
    {
-      LogCritical(StringFormat("Layer 2: Trailing DD %.2f%% — halting", trailing_dd * 100));
+      LogCritical(StringFormat("Layer 2: Trailing DD %.2f%% (peak=$%.2f now=$%.2f) — PERMANENT halt",
+                  trailing_dd * 100, g_peak_equity, equity));
       CloseAllPositions("Layer 2: Trailing DD");
-      g_trading_allowed = false;
+      g_permanent_halt = true;
+      SaveStateToGlobals();
       return false;
    }
 
+   // Layer 1: daily DD — resets each day via DailyReset()
    if(g_start_day_equity <= 0) g_start_day_equity = equity;
    double daily_loss = (g_start_day_equity - equity) / g_start_day_equity;
    if(daily_loss > InpDailyLossLimitPct / 100.0)
    {
-      LogCritical(StringFormat("Layer 1: Daily DD %.2f%% — halting", daily_loss * 100));
+      LogCritical(StringFormat("Layer 1: Daily DD %.2f%% — halted for today only (resets tomorrow)",
+                  daily_loss * 100));
       CloseAllPositions("Layer 1: Daily DD");
-      g_trading_allowed = false;
+      g_daily_halt = true;
+      SaveStateToGlobals();
       return false;
    }
 
-   // Layer 3: internal SL enforcement
+   // Layer 3: internal SL enforcement (backup in case broker SL slips)
    if(g_state == STATE_TRADE_ACTIVE && g_stop_loss > 0)
    {
       double bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
@@ -568,9 +591,16 @@ void DailyReset(datetime new_day_gmt)
    g_take_profit          = 0;
    g_direction            = 0;
    g_trade_taken_today    = false;
-   g_range_computed_today = false;   // v3.1: reset daily cache flag
+   g_range_computed_today = false;
    g_last_h1_bar          = 0;
    g_start_day_equity     = AccountInfoDouble(ACCOUNT_EQUITY);
+   // v3.2: reset daily halt — bad day doesn't stop trading forever
+   // g_permanent_halt is NOT reset here (trailing DD / kill switch are permanent)
+   if(g_daily_halt)
+   {
+      g_daily_halt = false;
+      LogInfo("Daily DD halt lifted for new trading day");
+   }
    SaveStateToGlobals();
 }
 
@@ -762,7 +792,7 @@ void OnTick()
    }
 
    if(!CheckSafetyLayers()) return;
-   if(!g_trading_allowed)   return;
+   if(g_daily_halt || g_permanent_halt) return;
 
    // ---------------------------------------------------------------
    // STATE: WAITING -> RANGE_SET
