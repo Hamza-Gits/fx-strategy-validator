@@ -81,7 +81,7 @@ This uses **Iter 1** sizing (council pick): 0.5% risk for 30 days, then 1.0% for
 
 1. Open MetaTrader 5
 2. **File → Open Data Folder** → `MQL5/Experts/`
-3. Copy `mql5_ea/LondonBreakout_v4.mq5` here
+3. Copy `mql5_ea/LondonBreakout_v5.mq5` here
 4. In MT5: Navigator (Ctrl+N) → Experts → right-click `LondonBreakout_v4` → Compile
 5. **View → Strategy Tester** (Ctrl+R)
 6. Symbol: GBPUSD, Timeframe: H1, **Date Range: 2014.11.01 – 2024.12.31** (start 2 months early to seed the W1 EMA), Initial Deposit: 25000, Leverage: 1:100
@@ -113,7 +113,7 @@ Expected time to +8% target (their pass rule): ~6–8 months. The5ers has no tim
 
 | File | Purpose |
 |---|---|
-| `mql5_ea/LondonBreakout_v4.mq5` | **The EA** — copy this to your MT5 |
+| `mql5_ea/LondonBreakout_v5.mq5` | **The EA** — copy this to your MT5 |
 | `mql5_ea/HOW_TO_BACKTEST.md` | Step-by-step MT5 backtest guide |
 | `mql5_ea/ARCHITECTURE.md` | EA design specification |
 | `STRATEGY_REPORT.md` | Full 13-section research report |
@@ -149,7 +149,7 @@ Expected time to +8% target (their pass rule): ~6–8 months. The5ers has no tim
 3. [STRATEGY_REPORT.md](STRATEGY_REPORT.md) — research results
 4. [ITERATION_REPORT.md](ITERATION_REPORT.md) — sizing decisions
 5. [mql5_ea/HOW_TO_BACKTEST.md](mql5_ea/HOW_TO_BACKTEST.md) — run it yourself
-6. `mql5_ea/LondonBreakout_v4.mq5` — the EA source
+6. `mql5_ea/LondonBreakout_v5.mq5` — the EA source
 
 ---
 

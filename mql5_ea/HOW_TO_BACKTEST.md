@@ -1,20 +1,20 @@
-# How to Backtest LondonBreakout_v4.mq5 on MT5
+# How to Backtest LondonBreakout_v5.mq5 on MT5
 
 ## Step 1: Install the EA
 
 1. Open MetaTrader 5
 2. Click **File → Open Data Folder**
 3. Navigate to `MQL5/Experts/`
-4. Copy `LondonBreakout_v4.mq5` into this folder
+4. Copy `LondonBreakout_v5.mq5` into this folder
 5. In MT5, open **Navigator** panel (Ctrl+N) → Experts
-6. Right-click `LondonBreakout_v4` → **Compile**
+6. Right-click `LondonBreakout_v5` → **Compile**
 7. Should compile with 0 errors, 0 warnings
 
 ## Step 2: Run Strategy Tester Backtest
 
 1. **View → Strategy Tester** (Ctrl+R)
 2. Configure:
-   - **Expert:** LondonBreakout_v4
+   - **Expert:** LondonBreakout_v5
    - **Symbol:** GBPUSD
    - **Timeframe:** H1
    - **Date Range:** **2014.11.01 - 2024.12.31** (CRITICAL — see below)
@@ -32,13 +32,13 @@
    - InpUseTrendFilter = true
    - InpW1EmaPeriod = 26
    - InpUseProgressiveRisk = true
-   - InpRiskPhase1Pct = 0.5 (Phase 1: 0-30 days)
-   - InpRiskPhase2Pct = 1.0 (Phase 2: 31-90 days)
-   - InpRiskPhase3Pct = 1.5 (Phase 3: 91+ days)
-   - InpDailyLossLimitPct = 3.5 (Layer 1, resets daily)
-   - InpTrailingDDPct = 25.0 (Layer 2 threshold — soft recovery on personal account)
-   - InpHardHalt = false (personal account: soft recovery, NOT permanent halt)
-   - InpRecoveryDays = 30 (days at 0.5% before watermark resets)
+   - InpUseProgressiveRisk = false (flat 0.75% — Iter 10)
+   - InpRiskPercent = 0.75 (Iter 10 — Python DD 9.88%, fits user's 10% cap)
+   - InpDailyLossLimitPct = 3.0 (Layer 1, resets daily)
+   - InpTrailingDDPct = 8.0 (Layer 2 threshold — soft recovery fires under 10% cap)
+   - InpHardHalt = false (personal account: soft recovery)
+   - InpRecoveryDays = 30 (days at 0.25% before watermark resets)
+   - InpRecoveryRiskPct = 0.25
 4. Click **Start**
 
 ## Step 3: Expected Results
@@ -92,7 +92,7 @@ Verify:
 
 ## Step 5: CSV Trade Log
 
-The EA writes every trade to `MQL5/Files/LondonBreakout_v4_trades.csv`:
+The EA writes every trade to `MQL5/Files/LondonBreakout_v5_trades.csv`:
 - 21 columns including direction, entry/exit, slippage, P&L, phase, recovery flag
 - Use this to generate the full Excel spreadsheet via `python/generate_trade_excel.py`
 
@@ -141,7 +141,7 @@ Before going live on The5ers $10k challenge:
 
 ## Support Files
 
-- `LondonBreakout_v4.mq5` — Main EA (council-locked Iter 1, soft recovery, The5ers mode)
+- `LondonBreakout_v5.mq5` — Main EA (council-locked Iter 1, soft recovery, The5ers mode)
 - `LondonBreakout_v3.mq5` — Prior version (kept for reference)
 - `ARCHITECTURE.md` — Council-approved design specification
 - `../STRATEGY_REPORT.md` — Full strategy validation report (DSR p<0.0005)

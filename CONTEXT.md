@@ -1,6 +1,15 @@
 # GBPUSD London Breakout — Master Context File
-**Last updated:** 2026-04-28
-**Status:** EA v4 council-locked, **DD-capped at 10% per user constraint**
+**Last updated:** 2026-04-29
+**Status:** EA v5 — entry-mechanism fixed (pending stop orders), Iter 10 default
+
+## v5 Critical Update (2026-04-29)
+**MT5 Report 17 (v4) was a disaster:** PF 0.91, 343 trades (vs Python 667), -$2,251 loss. Root cause: TWO entry-mechanism bugs.
+
+**Bug 1: Entry slippage.** v4 used market orders that filled 20-50 pips beyond the range boundary. Python assumes fills AT the boundary (stop order behaviour). R:R collapsed from 1:1.5 to 1:0.25 in many trades.
+
+**Bug 2: Missing entry bar.** v4's `hour < InpLondonEndHour=10` only checked 2 of the 3 London bars Python checks (missed the 09:00-10:00 bar's close). That's 33% of breakouts gone, explaining 343 vs 667 trades.
+
+**v5 fix:** Pending **BuyStop @ asian_high** + **SellStop @ asian_low** placed at 07:00 GMT, expiring 10:00 GMT. OCO logic cancels the unfilled side when one fills. Matches Python's fill model exactly.
 
 ---
 
@@ -49,22 +58,30 @@ The v4 EA's `InpTrailingDDPct` default has been raised to 25 historically, but p
 
 ---
 
-## Position Sizing — All 9 iterations vs 10% DD constraint
-| Iter | Rule | DD | 2x time | 3x time | Within 10% DD? |
-|------|------|----|---------|---------|----------------|
-| 1 | 0.5→1→1.5% prog | 19.1% | 2.67y | 4.85y | ❌ |
-| 2 | 1% base, 2% on 6-win | 13.0% | 4.67y | 8.36y | ❌ |
-| 3 | Flat 2% | 24.9% | 2.00y | 3.83y | ❌ |
-| 4 | Kelly 1.5% base | 20.2% | 2.67y | 6.00y | ❌ |
-| 5 | 1→1.5→2% | 23.2% | 2.17y | 4.60y | ❌ |
-| 6 | Flat 3% | 35.5% | 1.70y | 2.08y | ❌ |
-| 7 | 2→2.5→3% prog | 35.5% | 1.71y | 2.08y | ❌ |
-| 8 | 1.5→2→2.5% scaling | 31.9% | 2.00y | 3.80y | ❌ |
-| 9 | **Flat 0.5%** | **6.66%** | 9.80y | N/A | ✅ |
+## Position Sizing — All 13 iterations vs 10% DD / <5y constraint
+| Iter | Rule | DD | 2x time | 3x time | <10% DD? | <5y to 2x? |
+|------|------|----|---------|---------|----------|------------|
+| 1 | 0.5→1→1.5% prog | 19.1% | 2.67y | 4.85y | ❌ | ✅ |
+| 2 | 1% base, 2% on 6-win | 13.0% | 4.67y | 8.36y | ❌ | ✅ |
+| 3 | Flat 2% | 24.9% | 2.00y | 3.83y | ❌ | ✅ |
+| 4 | Kelly 1.5% base | 20.2% | 2.67y | 6.00y | ❌ | ✅ |
+| 5 | 1→1.5→2% | 23.2% | 2.17y | 4.60y | ❌ | ✅ |
+| 6 | Flat 3% | 35.5% | 1.70y | 2.08y | ❌ | ✅ |
+| 7 | 2→2.5→3% prog | 35.5% | 1.71y | 2.08y | ❌ | ✅ |
+| 8 | 1.5→2→2.5% scaling | 31.9% | 2.00y | 3.80y | ❌ | ✅ |
+| 9 | Flat 0.5% | 6.66% | 9.80y | N/A | ✅ | ❌ |
+| **10** | **Flat 0.75%** | **9.88%** | **7.49y** | **N/A** | **✅** | ❌ |
+| 11 | Flat 1.0% | 13.0% | 4.70y | 8.40y | ❌ | ✅ |
+| 12 | Slow prog 0.5→0.75→1.0% | 13.0% | 4.70y | 8.42y | ❌ | ✅ |
+| 13 | Flat 1.0% with loss-cut | 14.5% | 4.90y | 8.59y | ❌ | ✅ |
 
-**Hard truth:** with 10% DD constraint, the strategy edge cannot deliver 2-3x in <3y. The math doesn't support it. Iter 9 (flat 0.5%) hits 2x in 9.8 years.
+**Honest truth:** No single-pair sizing rule satisfies BOTH "<10% DD" AND "2x in <5y" simultaneously.
 
-To hit 2-3x in <3y with <10% DD requires a stronger edge than this strategy currently has, OR multi-pair / multi-strategy diversification (so DD is uncorrelated across systems).
+- **Iter 10 (flat 0.75%)** is the only iteration under 10% DD — but takes 7.5y to 2x
+- **Iter 11 (flat 1.0%)** hits 2x in 4.7y — but DD is 13%
+- For 2x in <5y with <10% DD on a single pair, the edge isn't strong enough
+
+**Path forward:** multi-pair diversification (run Iter 9/10 sizing on 3+ uncorrelated pairs). Aggregate return scales linearly; aggregate DD stays bounded due to uncorrelated drawdowns. Currently only GBPUSD has the validated edge — next research step is validating EURUSD/USDJPY breakouts.
 
 ---
 
@@ -80,7 +97,7 @@ To hit 2-3x in <3y with <10% DD requires a stronger edge than this strategy curr
 ---
 
 ## MT5 EA File
-`mql5_ea/LondonBreakout_v4.mq5` — current version: **v4.0**
+`mql5_ea/LondonBreakout_v5.mq5` — current version: **v5.0**
 
 ### Version History
 | Version | Change |
@@ -90,17 +107,18 @@ To hit 2-3x in <3y with <10% DD requires a stronger edge than this strategy curr
 | v3 | Progressive risk sizing |
 | v3.1 | Fix CopyRates; cache Asian range; bar-based check |
 | v3.2 | Daily DD now resets each day; trailing DD 8%→15% |
-| **v4** | **Soft recovery halt** (replaces permanent halt for personal); InpHardHalt toggle for prop firm; trailing DD configurable; 21-column CSV |
+| v4 | Soft recovery halt; InpHardHalt toggle for prop firm; 21-column CSV |
+| **v5** | **Pending stop orders** at range boundaries (matches Python fill model); **OCO logic** cancels unfilled side; **entry-window fix** captures all 3 London bars; default risk = Iter 10 (flat 0.75%) |
 
 ### Why v4 Was Built
 v3.2's trailing DD halt was still permanent. Phase 3 risk × loss streak triggered it → flatline 2018-onward. v4 replaces with soft recovery: pause 30 days at 0.5%, reset peak watermark, resume.
 
-### Recommended v4 Settings (10% DD compliant)
+### Recommended v5 Settings (Iter 10 — best fit under 10% DD)
 ```
-InpUseProgressiveRisk = false      ← flat risk (no Phase 2/3 escalation)
-InpRiskPercent        = 0.5        ← Iter 9 flat 0.5%
+InpUseProgressiveRisk = false      ← flat risk (Iter 10)
+InpRiskPercent        = 0.75       ← Iter 10 flat 0.75% (Python DD 9.88%)
 InpHardHalt           = false      ← soft recovery
-InpTrailingDDPct      = 10.0       ← user's absolute cap
+InpTrailingDDPct      = 8.0        ← soft recovery fires under 10% cap
 InpRecoveryDays       = 30
 InpRecoveryRiskPct    = 0.25       ← halved during recovery
 ```

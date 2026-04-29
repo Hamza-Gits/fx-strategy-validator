@@ -271,6 +271,33 @@ def risk_iter9_the5ers_optimised(equity, days, n_trades, ws, ls):
     return 0.5
 
 
+def risk_iter10_flat_075(equity, days, n_trades, ws, ls):
+    """Flat 0.75% — between Iter 9 and Iter 1 phase 1, target ~10% DD"""
+    return 0.75
+
+
+def risk_iter11_flat_100(equity, days, n_trades, ws, ls):
+    """Flat 1.0% — borderline 10% DD, ~14% CAGR target"""
+    return 1.0
+
+
+def risk_iter12_slow_progressive(equity, days, n_trades, ws, ls):
+    """Slow progressive: 0.5%→0.75%→1.0% — capped at 1%, 5y to 2x target"""
+    if days < 30:
+        return 0.5
+    elif days < 90:
+        return 0.75
+    else:
+        return 1.0
+
+
+def risk_iter13_loss_streak_cut(equity, days, n_trades, ws, ls):
+    """Flat 1.0% but cut to 0.25% on 3-loss streak, restore on win — DD-throttled"""
+    if ls >= 3:
+        return 0.25  # protect during bad streaks
+    return 1.0
+
+
 # === MAIN ITERATION LOOP ===
 
 def main():
@@ -298,6 +325,10 @@ def main():
         ("ITER 7: Aggressive progressive (2%→2.5%→3%)",           risk_iter7_aggressive_progressive,None),
         ("ITER 8: Fast-start trade-count scaling (1.5%→2%→2.5%)", risk_iter8_fast_start,            None),
         ("ITER 9: The5ers-safe flat 0.5%",                        risk_iter9_the5ers_optimised,     None),
+        ("ITER 10: Flat 0.75% (between 9 and 1)",                  risk_iter10_flat_075,             None),
+        ("ITER 11: Flat 1.0% (target ~10% DD)",                    risk_iter11_flat_100,             None),
+        ("ITER 12: Slow progressive 0.5->0.75->1.0%",              risk_iter12_slow_progressive,     None),
+        ("ITER 13: Flat 1.0% with 3-loss-streak cut",              risk_iter13_loss_streak_cut,      None),
     ]
 
     results = []
