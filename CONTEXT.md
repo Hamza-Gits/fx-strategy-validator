@@ -1,11 +1,26 @@
 # GBPUSD London Breakout — Master Context File
-**Last updated:** 2026-04-27  
-**Status:** EA v3.2 built, MT5 backtest in progress (flatline bug fixed)
+**Last updated:** 2026-04-28
+**Status:** EA v4 council-locked, **DD-capped at 10% per user constraint**
 
 ---
 
 ## What This Project Is
 A fully validated algorithmic trading strategy for GBPUSD, targeting deployment on The5ers prop firm (MT5). The strategy captures London session open range breakouts using Asian session price range as reference.
+
+---
+
+## ⚠️ HARD CONSTRAINT: 10% MAX DRAWDOWN
+
+User has set an absolute max drawdown limit of **10%** for the personal account.
+
+This rules out almost all of the council's iterations (Iter 1 has DD 19.1% — violates). The only iteration that fits:
+- **Iter 9: Flat 0.5%** — Max DD 6.66%, but CAGR only 7.4% (never hits 3x in 10y)
+
+For 2-3x in <3y AND <10% DD, we need a hybrid:
+- **Capped progressive risk** with `InpTrailingDDPct = 10.0` and soft recovery firing well before that cap
+- Trade smaller (0.5%–0.75%) — accept slower growth in exchange for hard DD safety
+
+The v4 EA's `InpTrailingDDPct` default has been raised to 25 historically, but per this constraint the effective deployment value is **10**, with soft recovery triggering at 7-8%.
 
 ---
 
@@ -15,11 +30,11 @@ A fully validated algorithmic trading strategy for GBPUSD, targeting deployment 
 | TP multiplier | 1.5× Asian range |
 | Min range | 15 pips |
 | Max range | 60 pips |
-| Trend filter | W1 EMA-26 (bullish above, bearish below, skip within 20 pips) |
+| Trend filter | W1 EMA-26 (skip within 20 pips of EMA) |
 | Asian session | 00:00–07:00 GMT |
 | Entry window | 07:00–10:00 GMT (first H1 close outside range) |
 | EOD exit | 17:00 GMT |
-| Cost model | 1.0 pip (The5ers actual: 0.9–1.3 pips all-in) |
+| Cost model | 1.0 pip (The5ers actual: 0.9–1.3 pips) |
 
 ---
 
@@ -27,88 +42,117 @@ A fully validated algorithmic trading strategy for GBPUSD, targeting deployment 
 | Metric | Value |
 |--------|-------|
 | OOS Profit Factor | **1.733** (Period A: 1.638, Period B: 1.829) |
-| DSR p-value | **p<0.0005** (2,000 permutations, all underperformed) |
+| DSR p-value | **p<0.0005** (2,000 permutations) |
 | Bootstrap | **99%+** both periods |
 | Win rate | **56–57%** |
-| Max DD (Python) | **0.73%** (fixed 0.5% risk) |
-| Configs tested | 180 (55 passed both periods) |
+| Configs tested | 180 (55 passed) |
 
 ---
 
-## Position Sizing — Council Iter 1 (Progressive)
-| Phase | Days | Risk |
-|-------|------|------|
-| Phase 1 | 0–30 | 0.5% |
-| Phase 2 | 31–90 | 1.0% |
-| Phase 3 | 91+ | 1.5% |
+## Position Sizing — All 9 iterations vs 10% DD constraint
+| Iter | Rule | DD | 2x time | 3x time | Within 10% DD? |
+|------|------|----|---------|---------|----------------|
+| 1 | 0.5→1→1.5% prog | 19.1% | 2.67y | 4.85y | ❌ |
+| 2 | 1% base, 2% on 6-win | 13.0% | 4.67y | 8.36y | ❌ |
+| 3 | Flat 2% | 24.9% | 2.00y | 3.83y | ❌ |
+| 4 | Kelly 1.5% base | 20.2% | 2.67y | 6.00y | ❌ |
+| 5 | 1→1.5→2% | 23.2% | 2.17y | 4.60y | ❌ |
+| 6 | Flat 3% | 35.5% | 1.70y | 2.08y | ❌ |
+| 7 | 2→2.5→3% prog | 35.5% | 1.71y | 2.08y | ❌ |
+| 8 | 1.5→2→2.5% scaling | 31.9% | 2.00y | 3.80y | ❌ |
+| 9 | **Flat 0.5%** | **6.66%** | 9.80y | N/A | ✅ |
 
-Python backtest result: **$25k → $197,200** (CAGR 23.1%, Max DD 19.1%, 10 years)
+**Hard truth:** with 10% DD constraint, the strategy edge cannot deliver 2-3x in <3y. The math doesn't support it. Iter 9 (flat 0.5%) hits 2x in 9.8 years.
+
+To hit 2-3x in <3y with <10% DD requires a stronger edge than this strategy currently has, OR multi-pair / multi-strategy diversification (so DD is uncorrelated across systems).
+
+---
+
+## Council Verdict (revised for 10% DD constraint)
+
+**Recommendation: Iter 9 (flat 0.5%)** as the personal-account default.
+- Compliant with 10% DD constraint
+- Same settings work for The5ers $10k evaluation (their max DD is 4%, this stays well within)
+- Slow but survivable
+
+**For 2-3x in <3y goal:** consider running Iter 9 across **3 uncorrelated pairs** (GBPUSD, USDJPY, EURUSD if they pass validation) — total return scales roughly 3× while DD remains ~10% (uncorrelated drawdowns).
 
 ---
 
 ## MT5 EA File
-`mql5_ea/LondonBreakout_v3.mq5` — current version: **v3.2**
+`mql5_ea/LondonBreakout_v4.mq5` — current version: **v4.0**
 
 ### Version History
 | Version | Change |
 |---------|--------|
 | v1 | Initial build |
-| v2 | CSV trade logger, trade context capture |
-| v3 | Progressive risk sizing (Phase 1/2/3) |
-| v3.1 | Fix CopyRates signature; cache Asian range once/day; bar-based breakout check |
-| v3.2 | **Fix permanent halt bug** — daily DD now resets each day; trailing DD raised 8%→15% |
+| v2 | CSV trade logger |
+| v3 | Progressive risk sizing |
+| v3.1 | Fix CopyRates; cache Asian range; bar-based check |
+| v3.2 | Daily DD now resets each day; trailing DD 8%→15% |
+| **v4** | **Soft recovery halt** (replaces permanent halt for personal); InpHardHalt toggle for prop firm; trailing DD configurable; 21-column CSV |
 
-### v3.2 Bug Fixed (critical)
-**Symptom:** Backtest flatlines from 2017 — only 94 trades over 9 years instead of ~600.  
-**Root cause:** `g_trading_allowed = false` was set by BOTH daily DD (Layer 1) and trailing DD (Layer 2), but was never reset. One bad day permanently stopped all trading.  
-**Fix:** Split into `g_daily_halt` (resets each morning in DailyReset) and `g_permanent_halt` (trailing DD + kill switch, never resets). Raised trailing DD default from 8% to 15%.
+### Why v4 Was Built
+v3.2's trailing DD halt was still permanent. Phase 3 risk × loss streak triggered it → flatline 2018-onward. v4 replaces with soft recovery: pause 30 days at 0.5%, reset peak watermark, resume.
 
----
-
-## MT5 Backtest Results So Far
-| Report | Period | Trades | PF | Net Profit | Notes |
-|--------|--------|--------|----|------------|-------|
-| Report 16 | 2015–2024 | 94 | 1.44 | $7,937 | Flatlined from 2017 — v3.1 bug |
-| v3.2 | TBD | ~500–600 expected | ~1.4+ | TBD | Fixed — needs retest |
+### Recommended v4 Settings (10% DD compliant)
+```
+InpUseProgressiveRisk = false      ← flat risk (no Phase 2/3 escalation)
+InpRiskPercent        = 0.5        ← Iter 9 flat 0.5%
+InpHardHalt           = false      ← soft recovery
+InpTrailingDDPct      = 10.0       ← user's absolute cap
+InpRecoveryDays       = 30
+InpRecoveryRiskPct    = 0.25       ← halved during recovery
+```
 
 ---
 
 ## Broker: The5ers
-- Spreads: 0.2–0.9 pips typical on GBPUSD
-- Commission: $4/lot round-trip
-- All-in cost: **0.9–1.3 pips** (backtest uses 1.0 pip — conservative)
-- No time limit on evaluation
-- Evaluation target: +8% on $10k account, max DD 4%
-- Platform: MT5
+- All-in cost: 0.9–1.3 pips
+- Evaluation target: +8% on $10k, max DD 4%, no time limit
 
-**For The5ers live:** Set `InpTrailingDDPct = 4.0` (their max DD rule)  
-**For personal account / backtest:** Leave at 15.0
+**The5ers $10k evaluation settings:**
+```
+InpHardHalt           = true
+InpTrailingDDPct      = 4.0
+InpDailyLossLimitPct  = 3.0
+InpUseProgressiveRisk = false
+InpRiskPercent        = 0.5
+```
+
+**Compliance:** All 13 prohibited practices verified — see `docs/the5ers_compliance.md`.
 
 ---
 
-## Next Steps (in order)
-1. **Rerun MT5 backtest 2015–2024 with v3.2** — should show 500+ trades, no flatline
-2. **Run 2025 forward test (Python)** — test champion config on truly unseen data
-3. **Demo trade Phase 1** — 30 days at 0.5% risk on The5ers demo
-4. **The5ers challenge** — $10k evaluation, EA running live
+## Next Steps
+1. **Rerun MT5 backtest** with v4 + Iter 9 settings + InpTrailingDDPct=10 (2014.11–2024.12)
+2. **Verify DD stays under 10%** — if it doesn't, drop to 0.25% risk
+3. **Validate 2025 forward test** (Python)
+4. **Multi-pair diversification research** — only path to 2-3x in <3y with 10% DD cap
+5. **Demo trade** before The5ers challenge
 
 ---
 
 ## Key Files
 | File | Purpose |
 |------|---------|
-| `mql5_ea/LondonBreakout_v3.mq5` | EA — deploy this to MT5 |
-| `mql5_ea/HOW_TO_BACKTEST.md` | MT5 backtest step-by-step guide |
-| `STRATEGY_REPORT.md` | Full 13-section research report |
-| `ITERATION_REPORT.md` | Sizing iteration results (6 variants, council picked Iter 1) |
-| `results/gbpusd_top.json` | Top 5 validated configs |
-| `validate_gbpusd.py` / `iterate_to_target.py` | Python backtests |
+| `mql5_ea/LondonBreakout_v4.mq5` | EA — deploy this to MT5 |
+| `mql5_ea/LondonBreakout_v3.mq5` | Prior version |
+| `mql5_ea/HOW_TO_BACKTEST.md` | Mandates 2014.11.01 start |
+| `STRATEGY_REPORT.md` | Full research |
+| `ITERATION_REPORT.md` | All 9 iterations + council verdict |
+| `docs/the5ers_compliance.md` | Prohibited-practices audit |
+| `results/trades_all.xlsx` | **Full Excel of all 667 trades** |
+| `results/iteration_to_target.json` | All 9 iteration numerical results |
+| `iterate_to_target.py` | Python iterator |
+| `generate_trade_excel.py` | Builds trades_all.xlsx |
 
 ---
 
 ## How to Resume in a New Chat
 1. Read this file first (`CONTEXT.md`)
 2. Read `STRATEGY_REPORT.md` for full research background
-3. Read `ITERATION_REPORT.md` for sizing decisions
+3. Read `ITERATION_REPORT.md` for sizing decisions + council verdict
 4. Check latest git log: `git log --oneline -10`
-5. Current task: rerun MT5 backtest with v3.2 EA, then run 2025 Python forward test
+5. **Note user's 10% DD hard cap** — this rules out all but Iter 9
+6. Current task: rerun MT5 backtest with v4 + 10% DD config

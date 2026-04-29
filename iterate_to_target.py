@@ -244,6 +244,33 @@ def risk_iter6_three_pct(equity, days, n_trades, ws, ls):
     return 3.0
 
 
+def risk_iter7_aggressive_progressive(equity, days, n_trades, ws, ls):
+    """Target 3x in <3y: 2%→2.5%→3% progressive, no loss-streak cut"""
+    if days < 30:
+        return 2.0
+    elif days < 90:
+        return 2.5
+    else:
+        return 3.0
+
+
+def risk_iter8_fast_start(equity, days, n_trades, ws, ls):
+    """Fast start: 1.5% day 0, hits 2.5% after 50 trades — quicker compounding than Iter 5"""
+    if ls >= 5:
+        return 1.0  # single safety reduction on very bad streak
+    if n_trades < 50:
+        return 1.5
+    elif n_trades < 150:
+        return 2.0
+    else:
+        return 2.5
+
+
+def risk_iter9_the5ers_optimised(equity, days, n_trades, ws, ls):
+    """The5ers-safe: flat 0.5% — designed for $10k evaluation with 4% max DD"""
+    return 0.5
+
+
 # === MAIN ITERATION LOOP ===
 
 def main():
@@ -262,12 +289,15 @@ def main():
     print(f"  {len(trades_raw)} trades generated\n")
 
     iterations = [
-        ("ITER 1: Council-progressive (0.5%→1%→1.5%)", risk_iter1_progressive, None),
-        ("ITER 2: Aggressive compound (1% base, 2% on 6-win streak)", risk_iter2_aggressive_compound, None),
-        ("ITER 3: Flat 2% (Expansionist)", risk_iter3_two_pct_flat, None),
-        ("ITER 4: Kelly-inspired adaptive (1.5% base)", risk_iter4_kelly_inspired, None),
-        ("ITER 5: Balanced scaling (1% → 1.5% → 2%)", risk_iter5_balanced, None),
-        ("ITER 6: Aggressive 3% flat", risk_iter6_three_pct, None),
+        ("ITER 1: Council-progressive (0.5%→1%→1.5%)",           risk_iter1_progressive,           None),
+        ("ITER 2: Aggressive compound (1% base, 2% on 6-win)",    risk_iter2_aggressive_compound,   None),
+        ("ITER 3: Flat 2% (Expansionist)",                         risk_iter3_two_pct_flat,          None),
+        ("ITER 4: Kelly-inspired adaptive (1.5% base)",            risk_iter4_kelly_inspired,        None),
+        ("ITER 5: Balanced scaling (1%→1.5%→2%)",                 risk_iter5_balanced,              None),
+        ("ITER 6: Aggressive 3% flat",                             risk_iter6_three_pct,             None),
+        ("ITER 7: Aggressive progressive (2%→2.5%→3%)",           risk_iter7_aggressive_progressive,None),
+        ("ITER 8: Fast-start trade-count scaling (1.5%→2%→2.5%)", risk_iter8_fast_start,            None),
+        ("ITER 9: The5ers-safe flat 0.5%",                        risk_iter9_the5ers_optimised,     None),
     ]
 
     results = []

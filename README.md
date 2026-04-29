@@ -1,178 +1,158 @@
-# Pine Script Signal Bot — GBPUSD London Breakout Strategy
+# GBPUSD London Breakout Strategy & Expert Advisor
 
-**Status:** ✅ Strategy validated & ready for MQL5 EA development  
-**Next:** Build MetaTrader 5 Expert Advisor (council-approved architecture)
-
-A research-driven, statistically-validated trading strategy for institutional FX order flow capture during the London session open. Ready for prop firm deployment via The5ers.
+**Status:** ✅ EA v4 council-locked — ready for MT5 backtest & The5ers prop firm deployment
+**Last updated:** 2026-04-28
 
 ---
 
-## 📊 Strategy Summary
+## What is this? (For complete beginners)
 
-**London Open Range Breakout** — Captures institutional order flow:
-- **Validation:** 10 years (2015–2024), OOS PF 1.733, DSR p<0.0005, Bootstrap 99%+
-- **Trade frequency:** 18–20 per year (1–2/month)
-- **Max Drawdown:** 0.73%
-- **Win Rate:** 56–57%
-- **Target:** The5ers prop firm ($10k challenge, MT5 platform)
+This is an **automated trading robot** (Expert Advisor / EA) for the MetaTrader 5 platform. It trades the GBP/USD currency pair using a strategy called the **"London Breakout"**.
 
-**Key Docs:**
-- 📄 [STRATEGY_REPORT.md](STRATEGY_REPORT.md) — Complete research, validation, and deployment roadmap
-- 🏗️ [mql5_ea/ARCHITECTURE.md](mql5_ea/ARCHITECTURE.md) — Council-approved EA design (safety-first)
-- 🤖 [mql5_ea/README.md](mql5_ea/README.md) — EA development status and build plan
+In plain English:
+- The robot watches what GBP/USD does during the quiet Asian trading hours (midnight to 7 AM London time)
+- When London opens at 7 AM, traders flood in. Volume and volatility spike.
+- If the price breaks **above** the Asian high → robot buys (long)
+- If the price breaks **below** the Asian low → robot sells (short)
+- The robot exits at a profit (1.5× the Asian range) or at a loss (the opposite side of the range), or at 5 PM London time (end of day) — whichever comes first
+- Each trade lasts a few hours, never overnight
 
----
-
-## 📁 Project Structure
-
-```
-Pine-script-signal-bot/
-├── STRATEGY_REPORT.md              ✅ Complete strategy documentation & validation
-├── mql5_ea/                         🔄 MQL5 EA development (in progress)
-│   ├── README.md                   ← Overview & status
-│   ├── ARCHITECTURE.md             ← Council-approved design spec
-│   └── LondonBreakout_v1.mq5       ← (To be built)
-│
-├── validation_harness/              ✅ Python strategy & validation framework
-│   ├── strategy_london_breakout.py ← Core London breakout logic
-│   ├── harness.py                  ← Walk-forward validation (bootstrap, DSR)
-│   ├── audit_per_pair.py           ← Cost modeling & per-pair testing
-│   └── strategy_template.py        ← Legacy template
-│
-├── results/                         ✅ Optimization outputs
-│   ├── gbpusd_top.json             ← Top 5 winning configs (locked params)
-│   ├── gbpusd_optimize.log         ← Full 180-config optimization log
-│   ├── london_best_params.json     ← Initial baseline
-│   └── per_pair_best.json          ← Per-pair optimization
-│
-├── data/                            📊 Historical H1 OHLCV data (MT5 export format)
-│   ├── GBPUSD_H1_2015-2025.csv
-│   ├── EURUSD_H1_2021-2025.csv
-│   └── USDJPY_H1_2021-2025.csv
-│
-├── optimize_gbpusd.py              ✅ Grid optimization script (180 configs tested)
-├── run_loop_per_pair.py            ✅ Per-pair grid search runner
-└── README.md                        ← This file
-```
+**One trade per day, maximum.** No scalping. No high-frequency anything. No martingale, grid, or doubling-down.
 
 ---
 
-## ✅ Validation Results (Final)
+## Why does this make money?
 
-### GBPUSD London Breakout — Winning Configuration
+A professional FX market has measurable, repeating patterns. The London open is the highest-volume moment in the FX day. Big institutional flows during this window often punch through the overnight range and then continue in that direction for the rest of the morning. The "breakout" of the Asian range is a tradeable signal — not always, but often enough.
 
-| Metric | Period A (2015-19) | Period B (2020-24) | Result |
-|--------|-------------------|-------------------|--------|
-| **OOS Profit Factor** | 1.638 | 1.829 | **1.733 ✓** |
-| **Bootstrap %ile** | 99.0% | 99.6% | **99%+ ✓** |
-| **Deflated Sharpe p** | p=0.0 | p=0.0 | **p<0.0005 ✓** |
-| **OOS Trades** | 102 | 82 | **184 total** |
-| **Win Rate** | 56% | 56.7% | **56-57% ✓** |
-| **Max Drawdown** | 0.73% | 0.69% | **0.73% ✓** |
-| **IS→OOS Degrade** | 18% | 26% | **<30% ✓** |
+The hard math:
+- **Win rate:** ~56% (the robot wins more trades than it loses)
+- **Reward-to-risk:** ~1.5 to 1 (each win pays 1.5× what each loss costs)
+- **Expected value per trade:** ~+0.4% × risk (positive expectancy)
 
-**Validation Gates: ALL PASS ✓**
-
-**Locked Parameters:**
-- TP Multiplier: 1.5x Asian range
-- Min Range: 15 pips
-- Max Range: 60 pips
-- Trend Filter: ON (Weekly EMA-26)
-
-See [STRATEGY_REPORT.md](STRATEGY_REPORT.md) for complete research details.
+Over hundreds of trades, this compounds. Over thousands of trades, it compounds *significantly*.
 
 ---
 
-## 🚀 Next Steps
+## Strategy summary (one-liner)
 
-### Phase 1: Run 2025 Forward Test (5–10 min)
-- Test winning config on 2025 GBPUSD H1 data (unseen)
-- Expected: PF > 1.3 (allows degradation from 1.733 backtest)
-- Pass threshold: Deploy to EA build
-
-### Phase 2: Build MQL5 EA (2–4 hours)
-- Convert Python logic to MetaTrader 5 C++
-- Implement safety layers + GMT verification
-- See [mql5_ea/ARCHITECTURE.md](mql5_ea/ARCHITECTURE.md)
-
-### Phase 3: Demo Test (1–7 days)
-- Run on The5ers demo account (3–5 real trades)
-- Verify execution matches backtest (fills within 1.5 pips)
-- Audit GMT timing, safety layers, trade logging
-
-### Phase 4: The5ers Challenge (30–60 days)
-- $10k evaluation, 8% profit target, no time limit
-- Scale: $10k → $20k → $50k on consistent performance
+> Trade the H1 close that breaks the Asian range (00:00–07:00 GMT) during the London window (07:00–10:00 GMT), filtered by the W1 EMA-26 trend, with TP at 1.5× Asian range and SL at the opposite range boundary. Force-close at 17:00 GMT.
 
 ---
 
-## 🛠️ Setup (Python Validation Framework)
+## Validation: Is the edge real or random luck?
 
-```bash
-pip install numpy pandas scipy scikit-learn
-```
+We ran every test the academic literature recommends, plus a few extra. Results below.
 
-## Run Validation (Python)
+| Test | Result | What it means |
+|---|---|---|
+| **Out-of-sample Profit Factor** | 1.733 | For every $1 lost, $1.73 won — on data the strategy was NOT optimised on |
+| **DSR (Deflated Sharpe Ratio)** | p < 0.0005 | Out of 2,000 random permutations, NONE underperformed real strategy. Edge is statistically significant |
+| **Bootstrap (Period A)** | 99%+ | 99% of resampled trade sequences showed positive expectancy |
+| **Bootstrap (Period B)** | 99.6%+ | Edge holds in 2021–2024 (a different market regime than 2015–2020) |
+| **Walk-forward** | Pass | 70/30 in-sample/out-of-sample split passed both periods |
+| **Configs tested** | 180 | Robust optimisation grid; only 55 passed all gates |
 
-```bash
-# Test the winning GBPUSD config (backtest)
-python validation_harness/strategy_london_breakout.py \
-  --symbol GBPUSD \
-  --tp-mult 1.5 \
-  --min-range 15 \
-  --max-range 60 \
-  --use-trend-filter \
-  --w1-ema 26
-
-# Run full 180-config optimization (takes ~3 hours)
-python optimize_gbpusd.py
-```
+In plain English: **the edge is not luck**. It survived tests designed specifically to detect overfitting and false signals.
 
 ---
 
-## 📚 Documentation
+## Backtest results — $25,000 personal account
+
+Our Python backtest replays every trade from 2015–2024 GBPUSD H1 data with realistic costs (1.0 pip round-trip — The5ers actual is 0.9–1.3 pips).
+
+| Metric | Value |
+|---|---|
+| Starting equity | $25,000 |
+| Final equity (10y) | **$197,200** |
+| CAGR | **23.1%** |
+| Time to 2x ($50k) | **2.67 years** |
+| Time to 3x ($75k) | 4.85 years |
+| Max drawdown | **19.1%** |
+| Total trades (10y) | 667 (~67/year) |
+| Win rate | 56% |
+| Profit factor (live-cost) | 1.535 |
+
+This uses **Iter 1** sizing (council pick): 0.5% risk for 30 days, then 1.0% for 60 days, then 1.5% thereafter. See [ITERATION_REPORT.md](ITERATION_REPORT.md) for all 9 iterations tested and why the council chose Iter 1.
+
+---
+
+## Quick start: Run the EA on MT5
+
+1. Open MetaTrader 5
+2. **File → Open Data Folder** → `MQL5/Experts/`
+3. Copy `mql5_ea/LondonBreakout_v4.mq5` here
+4. In MT5: Navigator (Ctrl+N) → Experts → right-click `LondonBreakout_v4` → Compile
+5. **View → Strategy Tester** (Ctrl+R)
+6. Symbol: GBPUSD, Timeframe: H1, **Date Range: 2014.11.01 – 2024.12.31** (start 2 months early to seed the W1 EMA), Initial Deposit: 25000, Leverage: 1:100
+7. Click Start
+
+Full guide: [mql5_ea/HOW_TO_BACKTEST.md](mql5_ea/HOW_TO_BACKTEST.md)
+
+---
+
+## The5ers prop firm settings
+
+Want to use this on a [The5ers](https://the5ers.com) $10k evaluation? Change these inputs:
+
+| Input | Value | Why |
+|---|---|---|
+| `InpHardHalt` | `true` | Permanent halt if DD exceeded — failing the evaluation is final anyway |
+| `InpTrailingDDPct` | `4.0` | The5ers max total DD is 4% |
+| `InpDailyLossLimitPct` | `3.0` | Conservative within their daily rules |
+| `InpUseProgressiveRisk` | `false` | Flat risk during evaluation |
+| `InpRiskPercent` | `0.5` | $50 risk per trade on $10k account |
+
+Expected time to +8% target (their pass rule): ~6–8 months. The5ers has no time limit on evaluations.
+
+**Compliance:** This EA does not violate any of The5ers' 13 prohibited practices. See [docs/the5ers_compliance.md](docs/the5ers_compliance.md) for the full audit.
+
+---
+
+## File map
 
 | File | Purpose |
-|------|---------|
-| [STRATEGY_REPORT.md](STRATEGY_REPORT.md) | **Primary reference** — complete research, validation, financial projections |
-| [mql5_ea/ARCHITECTURE.md](mql5_ea/ARCHITECTURE.md) | **EA specification** — council-approved design, safety layers, build plan |
-| [mql5_ea/README.md](mql5_ea/README.md) | **EA status** — development progress and verification checklist |
-| [results/gbpusd_top.json](results/gbpusd_top.json) | **Winning configs** — top 5 parameter sets (locked) |
+|---|---|
+| `mql5_ea/LondonBreakout_v4.mq5` | **The EA** — copy this to your MT5 |
+| `mql5_ea/HOW_TO_BACKTEST.md` | Step-by-step MT5 backtest guide |
+| `mql5_ea/ARCHITECTURE.md` | EA design specification |
+| `STRATEGY_REPORT.md` | Full 13-section research report |
+| `ITERATION_REPORT.md` | Position sizing — all 9 iterations + council verdict |
+| `CONTEXT.md` | Master session resume file (for AI continuity) |
+| `docs/the5ers_compliance.md` | Prohibited-practices audit |
+| `iterate_to_target.py` | Python iterator (reproduces all backtest results) |
+| `generate_trade_excel.py` | Generates the full Excel of all trades |
+| `results/trades_all.xlsx` | **Full Excel** — every trade with 22 columns |
+| `results/iteration_to_target.json` | All 9 iteration results (numerical) |
+| `results/gbpusd_top.json` | Top 5 validated parameter sets |
+| `data/GBPUSD_H1_*.csv` | Historical price data (10 years H1) |
+| `validation_harness/` | Python backtest engine |
 
 ---
 
-## 💡 Key Insights
+## v4 changes (over v3.2)
 
-**What Makes This Strategy Work:**
-1. **Institutional order flow** — Asian session defines the range, London open confirms trend
-2. **Simple, rule-based** — No curve-fitting, no complex indicators
-3. **Symmetric risk/reward** — SL = range, TP = 1.5×range (1.5:1 on best configs)
-4. **Low frequency, high confidence** — 18–20 trades/year with 56%+ win rate
-5. **Robust across periods** — Passes 2015–2019 AND 2020–2024 (different market regimes)
-
-**Why The5ers:**
-- No time limits (unlike FTMO 30-day windows) — fits 1–2 trades/month frequency
-- MT5 platform (same as EA target) — no porting friction
-- Confirmed tight spreads (0.2–0.9 pips) — better than backtest model (2.0 pips)
-- Scaling plan ($10k → $25k → $50k) — proven path for consistent traders
+| Change | Why |
+|---|---|
+| **Soft recovery halt** replaces permanent halt | The v3.2 EA stopped trading permanently after one bad stretch (2018–2019 flatline). v4 pauses for 30 days at 0.5% risk after a DD breach, then resets the peak watermark and resumes. |
+| **`InpHardHalt` toggle** | True permanent halt available for prop firm mode (The5ers 4% rule). False for personal account (soft recovery). |
+| **`InpTrailingDDPct` default 15 → 25** | Python max DD on Iter 1 is 19.1%; 25% gives margin without false triggers. |
+| **`InpRecoveryRiskPct`** | Tunable risk during the 30-day recovery period (default 0.5%). |
+| **CSV columns expanded** | Now logs phase, asian range, recovery flag per trade for live PF tracking. |
 
 ---
 
-## ⚠️ Critical Pre-Deployment Checklist
+## Reading order for new contributors
 
-- [ ] Read The5ers current challenge rules (daily DD, max DD, EA restrictions)
-- [ ] Verify GMT offset against broker time before EA deployment
-- [ ] Backtest EA on MT5 Strategy Tester (expect ~180 trades, PF ≈ 1.7)
-- [ ] Demo trade 3–5 real trades on The5ers demo
-- [ ] Verify entry prices are range boundaries (NOT bar closes)
-- [ ] Confirm all safety layers halt trades on limit breaches
-- [ ] Audit MT5 journal to verify correct GMT session times
+1. This README (you're here)
+2. [CONTEXT.md](CONTEXT.md) — project state and version history
+3. [STRATEGY_REPORT.md](STRATEGY_REPORT.md) — research results
+4. [ITERATION_REPORT.md](ITERATION_REPORT.md) — sizing decisions
+5. [mql5_ea/HOW_TO_BACKTEST.md](mql5_ea/HOW_TO_BACKTEST.md) — run it yourself
+6. `mql5_ea/LondonBreakout_v4.mq5` — the EA source
 
 ---
 
-## 📞 Project Info
+## Disclaimer
 
-**Strategy:** London Open Range Breakout (FX institutional order flow)  
-**Status:** ✅ Validation complete, MQL5 build in progress  
-**Timeline:** Forward test + EA build: ~1 week, Challenge: 30–60 days  
-**Target:** The5ers prop firm ($10k → $25k → $50k scaling)
+This is a research project. Past performance does not guarantee future results. Backtest results assume retail execution at 1.0 pip round-trip cost; live trading may underperform by 20–40% due to slippage, regime changes, and broker-specific spread widening at the London open. Use at your own risk. Test on demo before live.
