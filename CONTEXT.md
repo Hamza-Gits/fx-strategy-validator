@@ -1,6 +1,9 @@
 # GBPUSD London Breakout — Master Context File
-**Last updated:** 2026-04-29
+**Last updated:** 2026-05-01
 **Status:** EA v5 — entry-mechanism fixed (pending stop orders), Iter 10 default
+
+## Session Recovery (2026-05-01)
+All local Claude Code sessions lost after laptop restart / Desktop app update. Project state fully recovered from GitHub repo + session JSONL logs + master context prompt. Standing rule: **all changes are committed and pushed to GitHub after every response** so the repo is always the single source of truth. 54 trading skills in `.claude/skills/` are referenced for all analysis and decisions going forward.
 
 ## v5 Critical Update (2026-04-29)
 **MT5 Report 17 (v4) was a disaster:** PF 0.91, 343 trades (vs Python 667), -$2,251 loss. Root cause: TWO entry-mechanism bugs.
