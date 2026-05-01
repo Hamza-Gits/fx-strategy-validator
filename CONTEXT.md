@@ -1,9 +1,27 @@
 # GBPUSD London Breakout — Master Context File
 **Last updated:** 2026-05-01
-**Status:** EA v5 — entry-mechanism fixed (pending stop orders), Iter 10 default
+**Status:** EA v6 — hardened stop orders (retry guard, market fallback, stops-level)
 
 ## Session Recovery (2026-05-01)
 All local Claude Code sessions lost after laptop restart / Desktop app update. Project state fully recovered from GitHub repo + session JSONL logs + master context prompt. Standing rule: **all changes are committed and pushed to GitHub after every response** so the repo is always the single source of truth. 54 trading skills in `.claude/skills/` are referenced for all analysis and decisions going forward.
+
+## v6 Critical Update (2026-05-01)
+**MT5 Report 19 (v5) was a disaster:** infinite retry loop spamming "Invalid price" errors (10015) every tick. Multiple compounding bugs.
+
+**Bug 1 — Infinite retry loop:** v5 only set `g_pendings_placed=true` when at least one order placed successfully. When BOTH BuyStop and SellStop failed (broker rejection, stops-level violation, price already past boundary), the EA retried every tick forever, generating thousands of error logs per day.
+
+**Bug 2 — Late placement:** v5 placed orders whenever OnTick happened to enter `STATE_RANGE_SET`. Logs show this happening at 09:01 GMT instead of 07:00. By then, price had often already moved past `asian_high`, making BuyStop invalid (BuyStop must be > current Ask).
+
+**Bug 3 — No stops-level enforcement:** v5 didn't check `SYMBOL_TRADE_STOPS_LEVEL`. Some brokers reject pending stops too close to market price.
+
+**Bug 4 — No market fallback:** When price was already past the boundary, v5 simply failed instead of capturing the breakout via market order (which is what Python's "fill at boundary" model intends to capture).
+
+**v6 fixes (all four):**
+1. `g_pendings_placed = true` set **unconditionally** after placement attempt — one attempt per day, period
+2. Order placement attempts **immediately** when state transitions to `STATE_RANGE_SET` (right after Asian range closes)
+3. `SYMBOL_TRADE_STOPS_LEVEL` checked + `InpExtraStopsBuffer` safety margin
+4. Market-order fallback when price has already moved past boundary (controlled by `InpAllowMarketFallback`)
+5. Diagnostic logging on failure (logs req_price, Ask/Bid, min distance) for fast future diagnosis
 
 ## v5 Critical Update (2026-04-29)
 **MT5 Report 17 (v4) was a disaster:** PF 0.91, 343 trades (vs Python 667), -$2,251 loss. Root cause: TWO entry-mechanism bugs.
