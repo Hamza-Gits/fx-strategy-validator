@@ -396,7 +396,7 @@ int OnInit()
    LogInfo(StringFormat("Risk: Iter10 flat=%.2f%% | DailyDD=%.1f%% | TrailingDD=%.1f%% | HardHalt=%s",
            InpRiskPercent, InpDailyLossLimitPct, InpTrailingDDPct,
            InpHardHalt ? "YES (prop firm)" : "no (soft recovery)"));
-   LogInfo(StringFormat("v7 Entry: BAR-CLOSE market orders (IsNewBar H1) — no pending stops"));
+   LogInfo("v7 Entry: BAR-CLOSE market orders (IsNewBar H1) - no pending stops");
    if(!InpTradingEnabled) LogCritical("TradingEnabled=false — observe-only mode");
 
    return INIT_SUCCEEDED;
