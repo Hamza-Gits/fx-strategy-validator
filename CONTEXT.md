@@ -1,9 +1,35 @@
 # GBPUSD London Breakout — Master Context File
-**Last updated:** 2026-05-01
-**Status:** EA v6 — hardened stop orders (retry guard, market fallback, stops-level)
+**Last updated:** 2026-05-02
+**Status:** EA v7 — bar-close market orders (matches Python signal logic)
 
 ## Session Recovery (2026-05-01)
 All local Claude Code sessions lost after laptop restart / Desktop app update. Project state fully recovered from GitHub repo + session JSONL logs + master context prompt. Standing rule: **all changes are committed and pushed to GitHub after every response** so the repo is always the single source of truth. 54 trading skills in `.claude/skills/` are referenced for all analysis and decisions going forward.
+
+## v7 Critical Rewrite (2026-05-02)
+
+**MT5 Report 20 (v6) was a disaster:** Net -$2,738.50, PF 0.97, max DD 25.62%, 879 trades (vs Python 667), win rate 41.75% (vs 57%). The EA "kept making money then losing it all in big downtrends" — exactly the user's description.
+
+**ROOT CAUSE: Pending stops fill on intrabar spikes that Python ignores**
+
+Python's entry rule (validated): `if bar['close'] > asian_high → enter at asian_high`. Only triggers on confirmed bar CLOSE crossing the boundary.
+
+v6 EA used `BuyStop @ asian_high` which fills on ANY tick touching the level — including intrabar spikes that reverse before bar close. Result: ~212 false-breakout trades that Python never counts. These trades have ~30% win rate, dragging overall win rate from 57% to 42% and PF from 1.73 to 0.97.
+
+**Secondary bugs:**
+- **Market fallback** fired immediately when price was past boundary at 07:00, regardless of bar close
+- **EMA 20-pip ambiguity zone** (EA only) skipped trades Python takes
+- **Soft recovery DD compounding**: 8% trailing → recovery → reset peak → another 8% drop → 0.92³ = 22% absolute DD
+
+**v7 fixes (council-validated, unanimous):**
+1. **Bar-close market orders** via `IsNewBar()` — matches Python exactly. On confirmed H1 bar close, read `bar[1].close` and enter market order if breakout valid.
+2. **Removed pending stop logic entirely** — no BuyStop, SellStop, OCO, retry guards, stops-level checks
+3. **Removed market fallback** — bar-close logic handles all cases
+4. **Removed EMA ambiguity zone** — simple `close > EMA` matches Python
+5. **Absolute DD cap from starting equity** — prevents recovery cycles compounding past 10%
+
+**Why this won't repeat v4's slippage problem:** v4 had 20-50 pip slippage because it didn't use `IsNewBar()` (detected mid-bar). v7's `IsNewBar()` fires at exact bar boundary (08:00:00.000), market order fills at current ask ≈ previous bar close ± spread (1-3 pips).
+
+**Expected v7 results:** ~667 trades, ~56% win rate, PF ~1.5-1.7, DD ~8-11%.
 
 ## v6 Critical Update (2026-05-01)
 **MT5 Report 19 (v5) was a disaster:** infinite retry loop spamming "Invalid price" errors (10015) every tick. Multiple compounding bugs.
@@ -118,7 +144,7 @@ The v4 EA's `InpTrailingDDPct` default has been raised to 25 historically, but p
 ---
 
 ## MT5 EA File
-`mql5_ea/LondonBreakout_v5.mq5` — current version: **v5.0**
+`mql5_ea/LondonBreakout_v7.mq5` — current version: **v7.0**
 
 ### Version History
 | Version | Change |
@@ -128,21 +154,32 @@ The v4 EA's `InpTrailingDDPct` default has been raised to 25 historically, but p
 | v3 | Progressive risk sizing |
 | v3.1 | Fix CopyRates; cache Asian range; bar-based check |
 | v3.2 | Daily DD now resets each day; trailing DD 8%→15% |
-| v4 | Soft recovery halt; InpHardHalt toggle for prop firm; 21-column CSV |
-| **v5** | **Pending stop orders** at range boundaries (matches Python fill model); **OCO logic** cancels unfilled side; **entry-window fix** captures all 3 London bars; default risk = Iter 10 (flat 0.75%) |
+| v4 | Soft recovery halt; InpHardHalt toggle for prop firm; 21-column CSV — **DISASTER: PF 0.91, 343 trades, slippage 20-50 pips** |
+| v5 | Pending stop orders at range boundaries; OCO logic; entry-window fix captures all 3 London bars; default risk = Iter 10 (flat 0.75%) — **DISASTER: infinite retry loop, error 10015 spam (Report 19)** |
+| v6 | Hardened stop orders: retry guard, market fallback, stops-level enforcement, diagnostic logging — **DISASTER: PF 0.97, 879 trades, DD 25.62% (Report 20). Pending stops still fill on intrabar spikes Python ignores** |
+| **v7** | **BAR-CLOSE MARKET ORDERS via `IsNewBar()`** — matches Python signal logic exactly. Removed all pending stop logic, market fallback, EMA ambiguity zone. Added absolute DD cap from starting equity. Council-validated unanimous |
 
 ### Why v4 Was Built
 v3.2's trailing DD halt was still permanent. Phase 3 risk × loss streak triggered it → flatline 2018-onward. v4 replaces with soft recovery: pause 30 days at 0.5%, reset peak watermark, resume.
 
-### Recommended v5 Settings (Iter 10 — best fit under 10% DD)
+### Recommended v7 Settings (Iter 10 — best fit under 10% DD)
 ```
 InpUseProgressiveRisk = false      ← flat risk (Iter 10)
 InpRiskPercent        = 0.75       ← Iter 10 flat 0.75% (Python DD 9.88%)
 InpHardHalt           = false      ← soft recovery
-InpTrailingDDPct      = 8.0        ← soft recovery fires under 10% cap
+InpTrailingDDPct      = 8.0        ← absolute + trailing DD cap from starting equity
 InpRecoveryDays       = 30
 InpRecoveryRiskPct    = 0.25       ← halved during recovery
+InpUseTrendFilter     = true       ← W1 EMA-26 trend filter (no ambiguity zone)
 ```
+
+**v7 backtest checklist:**
+- File: `mql5_ea/LondonBreakout_v7.mq5`
+- Symbol: GBPUSD H1
+- Period: 2015.01.01–2024.01.01 (or longer)
+- Deposit: $25,000
+- Model: Every tick based on real ticks
+- Expected: ~667 trades (±30), ~56% win rate, PF ~1.5-1.7, DD ~8-11%
 
 ---
 
