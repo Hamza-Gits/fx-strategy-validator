@@ -11,7 +11,9 @@
       "Bash(python -c \"import numpy, pandas, scipy; print\\('deps OK'\\)\")",
       "Bash(python validation_harness/strategy_template.py --start 2015-01-01 --end 2019-12-31 --data-dir ./data --label \"Test Iter 1 - Period A\" --w1-ema 12 --d1-ema 20 --atr 14 --sl-mult 2.0 --tp-mult 3.0)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(python iterate_to_target.py)",
+      "Bash(python generate_trade_excel.py)"
     ]
   }
 }

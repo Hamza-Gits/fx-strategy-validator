@@ -1,0 +1,35 @@
+=== London Breakout ===
+Params: TP=1.5x  TrendFilter=ON  W1_EMA=20  RangePips=15.0-60.0
+Period: 2015-01-01 to 2024-12-31
+
+  EURUSD: 68757 H1 bars  (2013-01-01 to 2025-01-31)
+  GBPUSD: 68762 H1 bars  (2013-01-01 to 2025-01-31)
+  USDJPY: 68768 H1 bars  (2013-01-01 to 2025-01-31)
+============================================================
+  STRATEGY VALIDATION HARNESS
+============================================================
+  Data:          2015-01-02 09:00:00 to 2024-12-31 00:00:00
+  Bars:          55898
+  Prior trials:  9
+  Gates:
+    Bootstrap OOS PF >= 95.0th percentile of null
+    Deflated Sharpe p-value < 0.007
+    OOS trades >= 100
+    IS->OOS degradation < 30%
+
+  IS:  2015-01-02 to 2022-04-20
+  OOS: 2022-04-20 to 2024-12-31
+
+  IS:  1083 trades, PF=1.408, WR=49.8%
+  OOS: 482 trades, PF=1.586, WR=54.4%
+
+  Bootstrap: OOS PF beats 100.0% of zero-edge null
+  Deflated Sharpe: 31.386  (p=0.0000)
+
+============================================================
+  VERDICT: PASS
+  Strategy clears all validation gates.
+  Safe to port to MQL5 EA.
+============================================================
+
+>>> PASSED
