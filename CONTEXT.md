@@ -1,6 +1,6 @@
 # GBPUSD London Breakout — Master Context File
-**Last updated:** 2026-05-02
-**Status:** EA v7 — bar-close market orders (matches Python signal logic)
+**Last updated:** 2026-05-03
+**Status:** Phase 2 — Parity Oracle (Python trace + MQL5 v8 trace logger + diff script)
 
 ## Session Recovery (2026-05-01)
 All local Claude Code sessions lost after laptop restart / Desktop app update. Project state fully recovered from GitHub repo + session JSONL logs + master context prompt. Standing rule: **all changes are committed and pushed to GitHub after every response** so the repo is always the single source of truth. 54 trading skills in `.claude/skills/` are referenced for all analysis and decisions going forward.
@@ -30,6 +30,49 @@ v6 EA used `BuyStop @ asian_high` which fills on ANY tick touching the level —
 **Why this won't repeat v4's slippage problem:** v4 had 20-50 pip slippage because it didn't use `IsNewBar()` (detected mid-bar). v7's `IsNewBar()` fires at exact bar boundary (08:00:00.000), market order fills at current ask ≈ previous bar close ± spread (1-3 pips).
 
 **Expected v7 results:** ~667 trades, ~56% win rate, PF ~1.5-1.7, DD ~8-11%.
+
+## Phase 1 & 2 Diagnostic (2026-05-03)
+
+**Phase 1 — Sanity Check the 667 (✅ DONE)**
+Ran Python harness on 2023 GBPUSD only. Result: **86 signal days** (inconclusive zone between "MT5 right" <30 and "Python plausible" >150). This triggered Phase 2.
+
+**Phase 2 — Parity Oracle (✅ COMPLETE)**
+
+The council verdict was unambiguous: "Do not write v8. Build the parity oracle first."
+
+Built identical per-bar decision trace loggers in both Python and MQL5:
+
+1. **Python trace** (`phase2_python_trace.py`):
+   - Emits `decision_trace_python_GBPUSD_2023.csv` with 6208 bars traced
+   - Schema: date, bar_time_gmt, bar_close, w1_ema, trend_dir, asian_high, asian_low, asian_range_pips, range_ok, in_london, signal, skip_reason, entry_price, sl, tp
+   - Result: 86 signals (66 LONG, 20 SHORT)
+
+2. **MQL5 v8 — Parity Oracle EA** (`LondonBreakout_v8.mq5`):
+   - v7 + trace logger that writes identical CSV schema to MT5 Files folder
+   - New input: `InpTraceLogging = true` (default)
+   - `CheckBarCloseEntry()` instrumented: emits trace row on every London/post-Asian bar
+   - Signals: LONG, SHORT, NONE (with skip_reason: NO_BREAKOUT, TREND_FILTER_NO_DATA, BUY_ORDER_FAILED, SELL_ORDER_FAILED)
+   - gv_prefix: LB7_ → LB8_ (clean global state separation)
+   - Deployed to MT5 Experts folder (ready to compile & backtest)
+
+3. **Diff script** (`phase2_parity_diff.py`):
+   - Aligns both traces on bar_time_gmt timestamp
+   - Compares: signal, trend_dir, range_ok, in_london, skip_reason
+   - Numeric tolerance: 0.2 pips (handles float rounding)
+   - Output: `parity_diff_SYMBOL_YEAR.csv` with all divergent rows + summary statistics
+   - Detects first divergence immediately
+
+**Next action (YOUR TURN):**
+1. Compile v8 in MetaEditor (F7)
+2. Backtest v8 on GBPUSD H1 **2023 only** (2023.01.01 — 2023.12.31)
+3. Copy `decision_trace_mql5_GBPUSD_2023.csv` from MT5 Files folder to `diagnostic/traces/`
+4. Run: `python diagnostic/phase2_parity_diff.py GBPUSD 2023`
+5. This reveals **exactly which bar** MQL5 diverges from Python (and why: 56 vs 86 signals)
+
+This is the critical gate. Once we know the root cause of the divergence, we either:
+- Fix a bug in v8 and retest
+- Discover v7's bar-close logic was correct all along (validates path forward)
+- Find evidence the edge doesn't exist (kill strategy per Risk Manager's kill criterion)
 
 ## v6 Critical Update (2026-05-01)
 **MT5 Report 19 (v5) was a disaster:** infinite retry loop spamming "Invalid price" errors (10015) every tick. Multiple compounding bugs.
