@@ -32,6 +32,7 @@ W1_EMA_PERIOD  = 26
 ATR_MULT       = 1.0
 SL_ATR_MULT    = 1.5
 TP_ATR_MULT    = 3.0
+EOD_EXIT_HOUR  = 22
 
 
 def compute_d1(h1):
@@ -107,8 +108,11 @@ def run_python_trace(year: int, data_file: str):
         sl_price = ''
         tp_price = ''
 
+        past_eod = ts.hour >= EOD_EXIT_HOUR
         if trade_taken_today:
             skip_reason = 'TRADE_ALREADY_TAKEN'
+        elif past_eod:
+            skip_reason = 'PAST_EOD'
         elif allow_long and bar_close > prev_high + threshold:
             signal = 'LONG'
             entry = bar_close

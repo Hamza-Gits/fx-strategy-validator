@@ -2,16 +2,17 @@
 //|                                                   XAUUSD_v1.mq5  |
 //|     XAUUSD Daily ATR Breakout EA — Aqua Trader $50k              |
 //|                                                                  |
-//|  Strategy (Phase 4 OOS validated robust config):                 |
+//|  Strategy (intraday variant, Phase 4 OOS pending re-validation): |
 //|    ATR multiplier   = 1.0 (D1 ATR-14)                            |
 //|    Trend filter     = W1 EMA-26 (long if W1 close > EMA)         |
 //|    SL = 1.5 * ATR(14), TP = 3.0 * ATR(14)                        |
-//|    Max hold         = 5 trading days                             |
+//|    EOD exit         = 22:00 GMT (close all positions, no carry)  |
 //|    BE move          = +0.2R after +1.0R reached                  |
 //|    Trail            = 1*ATR after +2.0R reached                  |
 //|    One trade per day, bar-close market orders only.              |
 //|                                                                  |
-//|  OOS stats (2021-2025): PF 1.50, WR 50%, AvgR 0.177, N=34.       |
+//|  Note: original multi-day OOS (PF 1.50) is replaced by intraday  |
+//|  per user requirement. Phase 4 must re-validate intraday OOS.    |
 //|                                                                  |
 //|  Risk architecture (Aqua Trader $50k, 5%/10% DD):                |
 //|    Risk per trade   = 1.0% flat                                  |
@@ -40,7 +41,7 @@ input double InpSlAtrMult       = 1.5;
 input double InpTpAtrMult       = 3.0;
 input int    InpAtrPeriod       = 14;
 input int    InpW1EmaPeriod     = 26;
-input int    InpMaxHoldDays     = 5;
+input int    InpEodExitHour     = 22;     // GMT — close all positions at this hour (intraday only)
 input double InpBeTriggerR      = 1.0;
 input double InpBeOffsetR       = 0.2;
 input double InpTrailTriggerR   = 2.0;
@@ -318,10 +319,16 @@ void EvaluateEntry(datetime bar_time)
    string skip_reason = "";
    double entry_p     = 0, sl_p = 0, tp_p = 0;
 
-   bool can_open = !g_has_trade && !g_trade_taken_today && !g_halted_today && !g_halted_total;
+   // Bar-1's hour (the bar that just closed)
+   MqlDateTime bar1_struct;
+   TimeToStruct(iTime(_Symbol, PERIOD_H1, 1), bar1_struct);
+   bool past_eod = (bar1_struct.hour >= InpEodExitHour);
+
+   bool can_open = !g_has_trade && !g_trade_taken_today && !g_halted_today && !g_halted_total && !past_eod;
 
    if(g_trade_taken_today)        skip_reason = "TRADE_ALREADY_TAKEN";
    else if(g_has_trade)           skip_reason = "TRADE_ACTIVE";
+   else if(past_eod)              skip_reason = "PAST_EOD";
    else if(!(allow_long || allow_short)) skip_reason = "TREND_FILTER";
    else if(allow_long  && bar_close > prev_high + threshold) {
       signal  = "LONG";
@@ -344,6 +351,10 @@ void EvaluateEntry(datetime bar_time)
                  threshold, allow_long, allow_short,
                  signal, skip_reason, entry_p, sl_p, tp_p);
    }
+
+   // Mark day as traded as soon as a signal fires — even if trading disabled
+   // (parity with Python: trace logs only first breakout per day).
+   if(signal != "NONE") g_trade_taken_today = true;
 
    if(!can_open || signal == "NONE" || !InpTradingEnabled) return;
 
@@ -378,7 +389,6 @@ void EvaluateEntry(datetime bar_time)
    g_ctx.be_moved     = false;
    g_ctx.trail_active = false;
    g_has_trade        = true;
-   g_trade_taken_today = true;
 
    if(InpVerboseLogging)
       PrintFormat("ENTRY %s lot=%.2f entry=%.2f sl=%.2f tp=%.2f atr=%.2f",
@@ -434,10 +444,11 @@ void ManageOpenTrade()
       }
    }
 
-   // Max hold cutoff
-   int held_days = (int)((TimeCurrent() - g_ctx.open_time) / 86400);
-   if(held_days >= InpMaxHoldDays) {
-      if(InpVerboseLogging) PrintFormat("MAX_HOLD: closing after %d days", held_days);
+   // Same-day EOD exit at InpEodExitHour GMT
+   MqlDateTime now_struct;
+   TimeToStruct(TimeCurrent(), now_struct);
+   if(now_struct.hour >= InpEodExitHour) {
+      if(InpVerboseLogging) PrintFormat("EOD_EXIT: closing at %02d:00 GMT", now_struct.hour);
       trade.PositionClose(g_ctx.ticket);
       g_has_trade = false;
    }
