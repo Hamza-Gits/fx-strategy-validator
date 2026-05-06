@@ -40,7 +40,20 @@ def compute_d1(h1):
     high, low, close = d1['high'], d1['low'], d1['close']
     prev_close = close.shift(1)
     tr = pd.concat([high - low, (high - prev_close).abs(), (low - prev_close).abs()], axis=1).max(axis=1)
-    d1['atr'] = tr.ewm(alpha=1/ATR_PERIOD, adjust=False).mean()
+    # MT5-style Wilder's ATR: seed with SMA of first N TRs, then EWM with alpha=1/N
+    # This matches iATR(PERIOD_D1, N) initialization in MetaTrader 5
+    atr = tr.copy() * np.nan
+    valid = tr.dropna()
+    if len(valid) >= ATR_PERIOD:
+        seed_idx = valid.index[ATR_PERIOD - 1]
+        seed_val = valid.iloc[:ATR_PERIOD].mean()
+        atr.loc[seed_idx] = seed_val
+        alpha = 1.0 / ATR_PERIOD
+        prev = seed_val
+        for idx in valid.index[ATR_PERIOD:]:
+            prev = prev * (1 - alpha) + valid.loc[idx] * alpha
+            atr.loc[idx] = prev
+    d1['atr'] = atr
     d1['prev_high'] = high.shift(1)
     d1['prev_low']  = low.shift(1)
     return d1
@@ -48,15 +61,29 @@ def compute_d1(h1):
 
 def compute_w1(h1):
     w1 = h1.resample('1W').agg({'close':'last'}).dropna()
-    w1['ema'] = w1['close'].ewm(span=W1_EMA_PERIOD, adjust=False).mean()
+    # MT5-style EMA: seed with SMA of first N values, then EWM with alpha=2/(N+1)
+    # This matches iMA(PERIOD_W1, N, MODE_EMA) initialization in MetaTrader 5
+    closes = w1['close']
+    ema = closes.copy() * np.nan
+    alpha = 2.0 / (W1_EMA_PERIOD + 1)
+    if len(closes) >= W1_EMA_PERIOD:
+        seed_idx = closes.index[W1_EMA_PERIOD - 1]
+        seed_val = closes.iloc[:W1_EMA_PERIOD].mean()
+        ema.loc[seed_idx] = seed_val
+        prev = seed_val
+        for idx in closes.index[W1_EMA_PERIOD:]:
+            prev = prev * (1 - alpha) + closes.loc[idx] * alpha
+            ema.loc[idx] = prev
+    w1['ema'] = ema
     return w1
 
 
 def run_python_trace(year: int, data_file: str):
     print(f"\n=== XAUUSD Phase 2 Python Trace — {year} ===")
     h1_full = load_mt5_csv(data_file)
-    # Include warmup year
-    h1 = h1_full.loc[f'{year-1}-01-01':f'{year}-12-31'].copy()
+    # 3-year warmup: Wilder's ATR(14) needs ~3yr to converge from any start value
+    # (13/14)^756 ≈ 0.4% residual weight — matches MQL5 full-history init
+    h1 = h1_full.loc[f'{year-3}-01-01':f'{year}-12-31'].copy()
 
     d1 = compute_d1(h1)
     w1 = compute_w1(h1)

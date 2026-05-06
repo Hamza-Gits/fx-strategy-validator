@@ -1,0 +1,2 @@
+date,bar_time_gmt,bar_close,bar_high,bar_low,atr_d1,prev_high,prev_low,w1_close,w1_ema,trend_dir,threshold,allow_long,allow_short,signal,skip_reason,entry_price,sl,tp
+2020.12.31,2020.12.31 20:00:00,1893.68,1894.99,1890.21,23.844,1900.38,1885.41,1893.68,1862.704,LONG,23.844,YES,NO,NONE,NO_BREAKOUT,,,
