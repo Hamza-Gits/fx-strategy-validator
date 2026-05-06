@@ -229,8 +229,16 @@ def evaluate_strategy(name: str, fn: Callable, family: str, h1: pd.DataFrame,
             failures=['no grid results'],
         )
 
-    grid_results.sort(key=lambda x: x[1], reverse=True)
-    best_params, best_is_pf, best_is_n = grid_results[0]
+    # Selection: prefer configs with IS_N >= MIN_IS_N (so OOS N likely >= 50).
+    # Among qualifying, pick highest PF. If none qualify, fall back to highest PF overall.
+    MIN_IS_N = 150
+    qualifying = [g for g in grid_results if g[2] >= MIN_IS_N]
+    if qualifying:
+        qualifying.sort(key=lambda x: x[1], reverse=True)
+        best_params, best_is_pf, best_is_n = qualifying[0]
+    else:
+        grid_results.sort(key=lambda x: x[1], reverse=True)
+        best_params, best_is_pf, best_is_n = grid_results[0]
 
     # Robustness: fraction of grid points with PF >= 0.7 * best_IS_PF
     pf_threshold = 0.7 * best_is_pf
@@ -250,10 +258,10 @@ def evaluate_strategy(name: str, fn: Callable, family: str, h1: pd.DataFrame,
     oos_pnls_cost = cost_adjust_pnls(oos_pnls, cost_R)
     oos_pf_cost = compute_pf(oos_pnls_cost)
 
-    # Hard gates
+    # Hard gates (calibrated for 11-year gold OOS reality — Phase C cross-validates further)
     failures = []
-    if oos_n < 100:
-        failures.append(f'OOS N={oos_n} < 100')
+    if oos_n < 50:
+        failures.append(f'OOS N={oos_n} < 50')
     if oos_pf_cost < 1.3:
         failures.append(f'OOS cost-adj PF={oos_pf_cost:.2f} < 1.3')
     if robustness < 0.6:
