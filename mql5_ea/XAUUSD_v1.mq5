@@ -2,27 +2,25 @@
 //|                                                   XAUUSD_v1.mq5  |
 //|     XAUUSD Daily ATR Breakout EA — Aqua Trader $50k              |
 //|                                                                  |
-//|  Strategy (intraday variant, Phase 4 OOS pending re-validation): |
+//|  Strategy (multi-day hold, Phase 4 OOS validated PF 1.50):       |
 //|    ATR multiplier   = 1.0 (D1 ATR-14)                            |
-//|    Trend filter     = W1 EMA-26 (long if W1 close > EMA)         |
+//|    Trend filter     = W1 EMA-26 (W1 close = prev closed week)    |
 //|    SL = 1.5 * ATR(14), TP = 3.0 * ATR(14)                        |
-//|    EOD exit         = 22:00 GMT (close all positions, no carry)  |
+//|    Max hold         = 5 days (then exit at next H1 bar close)    |
 //|    BE move          = +0.2R after +1.0R reached                  |
 //|    Trail            = 1*ATR after +2.0R reached                  |
 //|    One trade per day, bar-close market orders only.              |
-//|                                                                  |
-//|  Note: original multi-day OOS (PF 1.50) is replaced by intraday  |
-//|  per user requirement. Phase 4 must re-validate intraday OOS.    |
 //|                                                                  |
 //|  Risk architecture (Aqua Trader $50k, 5%/10% DD):                |
 //|    Risk per trade   = 1.0% flat                                  |
 //|    Daily loss halt  = 4.0% (1% buffer below 5% Aqua hard rule)   |
 //|    Total DD halt    = 9.0% absolute (1% buffer below 10% rule)   |
 //|                                                                  |
-//|  v7 LESSONS APPLIED:                                             |
-//|    - Bar-close market orders (IsNewBar pattern), no pending stops|
+//|  v8 FIXES APPLIED:                                               |
+//|    - W1 close uses shift=1 (prev closed week, not live bar)      |
+//|    - Multi-day hold restored (EOD kill removed)                  |
+//|    - Bar-close market orders (IsNewBar pattern)                  |
 //|    - Absolute DD cap from starting equity (not trailing)         |
-//|    - No EMA ambiguity zone — direct > / < comparison             |
 //|    - Parity trace logger writes identical schema to Python       |
 //+------------------------------------------------------------------+
 #property copyright "XAUUSD Daily ATR Breakout v1"
@@ -41,7 +39,7 @@ input double InpSlAtrMult       = 1.5;
 input double InpTpAtrMult       = 3.0;
 input int    InpAtrPeriod       = 14;
 input int    InpW1EmaPeriod     = 26;
-input int    InpEodExitHour     = 22;     // GMT — close all positions at this hour (intraday only)
+input int    InpMaxHoldDays     = 5;      // exit position after this many calendar days
 input double InpBeTriggerR      = 1.0;
 input double InpBeOffsetR       = 0.2;
 input double InpTrailTriggerR   = 2.0;
@@ -302,7 +300,7 @@ void EvaluateEntry(datetime bar_time)
 
    double prev_high = iHigh(_Symbol, PERIOD_D1, 1);
    double prev_low  = iLow(_Symbol,  PERIOD_D1, 1);
-   double w1_close  = iClose(_Symbol, PERIOD_W1, 0);
+   double w1_close  = iClose(_Symbol, PERIOD_W1, 1);   // shift=1: prev closed week (parity with Python)
 
    double bar_close = iClose(_Symbol, PERIOD_H1, 1);
    double bar_high  = iHigh(_Symbol,  PERIOD_H1, 1);
@@ -319,16 +317,10 @@ void EvaluateEntry(datetime bar_time)
    string skip_reason = "";
    double entry_p     = 0, sl_p = 0, tp_p = 0;
 
-   // Bar-1's hour (the bar that just closed)
-   MqlDateTime bar1_struct;
-   TimeToStruct(iTime(_Symbol, PERIOD_H1, 1), bar1_struct);
-   bool past_eod = (bar1_struct.hour >= InpEodExitHour);
-
-   bool can_open = !g_has_trade && !g_trade_taken_today && !g_halted_today && !g_halted_total && !past_eod;
+   bool can_open = !g_has_trade && !g_trade_taken_today && !g_halted_today && !g_halted_total;
 
    if(g_trade_taken_today)        skip_reason = "TRADE_ALREADY_TAKEN";
    else if(g_has_trade)           skip_reason = "TRADE_ACTIVE";
-   else if(past_eod)              skip_reason = "PAST_EOD";
    else if(!(allow_long || allow_short)) skip_reason = "TREND_FILTER";
    else if(allow_long  && bar_close > prev_high + threshold) {
       signal  = "LONG";
@@ -444,11 +436,11 @@ void ManageOpenTrade()
       }
    }
 
-   // Same-day EOD exit at InpEodExitHour GMT
-   MqlDateTime now_struct;
-   TimeToStruct(TimeCurrent(), now_struct);
-   if(now_struct.hour >= InpEodExitHour) {
-      if(InpVerboseLogging) PrintFormat("EOD_EXIT: closing at %02d:00 GMT", now_struct.hour);
+   // Max hold exit: close after InpMaxHoldDays calendar days
+   int hold_seconds = InpMaxHoldDays * 86400;
+   if(TimeCurrent() - g_ctx.open_time >= hold_seconds) {
+      if(InpVerboseLogging) PrintFormat("MAX_HOLD_EXIT: position age %d days",
+                                        (int)((TimeCurrent() - g_ctx.open_time) / 86400));
       trade.PositionClose(g_ctx.ticket);
       g_has_trade = false;
    }
