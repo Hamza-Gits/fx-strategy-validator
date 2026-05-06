@@ -1,0 +1,13 @@
+strategy,family,is_pf,is_n,oos_pf,oos_pf_cost,oos_n,oos_avg_r,oos_max_dd_pct,robustness,grid_size,rejected,failures,best_params
+ema_cross,trend,1.72,158,2.667,2.456,54,0.5556,0.69,0.875,32,False,,"{'fast': 10, 'slow': 50, 'adx_min': 20.0, 'sl_mult': 1.5, 'tp_mult': 2.0}"
+triple_screen,trend,2.589,217,2.086,1.942,93,0.5138,1.11,0.472,36,True,Robustness=0.47 < 0.6 (cherry-pick risk),"{'d1_ema_period': 20, 'h4_rsi_long_max': 45.0, 'sl_mult': 1.5, 'tp_mult': 3.0}"
+donchian,trend,1.315,168,1.456,1.255,73,0.1206,0.5,1.0,16,True,OOS cost-adj PF=1.26 < 1.3,"{'lookback': 20, 'sl_mult': 2.0, 'tp_mult': 3.0}"
+keltner,volatility,1.292,372,1.111,1.036,154,0.0714,2.15,1.0,36,True,OOS cost-adj PF=1.04 < 1.3,"{'ema_period': 10, 'band_mult': 2.5, 'sl_mult': 1.0, 'tp_mult': 2.0}"
+london_open,session,1.362,183,1.075,0.993,101,0.0433,2.09,0.861,36,True,OOS cost-adj PF=0.99 < 1.3,"{'london_hour': 7, 'min_range_atr': 0.7, 'sl_atr_mult': 1.5, 'tp_atr_mult': 3.0}"
+bb_squeeze,volatility,1.178,572,0.933,0.87,264,-0.0455,4.37,1.0,24,True,OOS cost-adj PF=0.87 < 1.3,"{'bb_period': 20, 'squeeze_lookback': 80, 'sl_mult': 1.0, 'tp_mult': 2.0}"
+opening_range,volatility,1.05,1904,0.918,0.855,830,-0.0548,15.35,1.0,16,True,OOS cost-adj PF=0.85 < 1.3; Max DD=15.3% > 15%,"{'range_start': 7, 'range_end': 9, 'sl_atr_mult': 1.0, 'tp_atr_mult': 2.0}"
+ny_london_overlap,session,1.084,1171,0.878,0.823,517,-0.0914,14.19,1.0,24,True,OOS cost-adj PF=0.82 < 1.3,"{'overlap_start': 12, 'momentum_atr': 0.7, 'sl_atr_mult': 0.7, 'tp_atr_mult': 2.0}"
+gold_am_fix,session,1.063,1583,0.872,0.813,698,-0.0875,15.23,1.0,16,True,OOS cost-adj PF=0.81 < 1.3; Max DD=15.2% > 15%,"{'range_start': 10, 'range_end': 12, 'sl_atr_mult': 1.0, 'tp_atr_mult': 2.5}"
+nr7,volatility,0.699,21,0.463,0.4,3,-0.2418,0.27,0.417,12,True,OOS N=3 < 50; OOS cost-adj PF=0.40 < 1.3; Robustness=0.42 < 0.6 (cherry-pick risk),"{'lookback': 10, 'sl_atr_mult': 1.0, 'tp_atr_mult': 3.0}"
+bb_reversion,reversion,0.24,391,0.34,0.299,173,-0.3917,14.12,0.708,24,True,OOS cost-adj PF=0.30 < 1.3,"{'bb_period': 20, 'bb_std': 1.8, 'sl_atr_mult': 1.5, 'trend_ema_period': 100}"
+rsi2_connors,reversion,0.318,711,0.245,0.216,326,-0.5028,32.78,1.0,24,True,OOS cost-adj PF=0.22 < 1.3; Max DD=32.8% > 15%,"{'oversold': 15, 'trend_ma_period': 100, 'sl_atr_mult': 1.5, 'tp_atr_mult': 1.5}"

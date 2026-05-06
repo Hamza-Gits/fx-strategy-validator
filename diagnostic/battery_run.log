@@ -1,0 +1,91 @@
+
+========================================================================
+  STRATEGY BATTERY — XAUUSD  2014-01-02 -> 2024-12-31
+  64762 H1 bars  |  IS=70%  OOS=30%
+  Cost model: spread=0.4 + slip=0.2 + comm=2%R ≈ 0.047R/trade
+========================================================================
+
+[donchian] family=trend grid=16 points...
+  [REJECT] IS_PF= 1.32 (N=168)  OOS_PF= 1.46 (N=73)  OOS_cost= 1.26  AvgR=+0.121  DD=0.5%  Rob=1.00  (120s)
+      - OOS cost-adj PF=1.26 < 1.3
+      best params: {'lookback': 20, 'sl_mult': 2.0, 'tp_mult': 3.0}
+
+[ema_cross] family=trend grid=32 points...
+  [PASS]   IS_PF= 1.72 (N=158)  OOS_PF= 2.67 (N=54)  OOS_cost= 2.46  AvgR=+0.556  DD=0.7%  Rob=0.88  (96s)
+      best params: {'fast': 10, 'slow': 50, 'adx_min': 20.0, 'sl_mult': 1.5, 'tp_mult': 2.0}
+
+[triple_screen] family=trend grid=36 points...
+  [REJECT] IS_PF= 2.59 (N=217)  OOS_PF= 2.09 (N=93)  OOS_cost= 1.94  AvgR=+0.514  DD=1.1%  Rob=0.47  (284s)
+      - Robustness=0.47 < 0.6 (cherry-pick risk)
+      best params: {'d1_ema_period': 20, 'h4_rsi_long_max': 45.0, 'sl_mult': 1.5, 'tp_mult': 3.0}
+
+[keltner] family=volatility grid=36 points...
+  [REJECT] IS_PF= 1.29 (N=372)  OOS_PF= 1.11 (N=154)  OOS_cost= 1.04  AvgR=+0.071  DD=2.2%  Rob=1.00  (312s)
+      - OOS cost-adj PF=1.04 < 1.3
+      best params: {'ema_period': 10, 'band_mult': 2.5, 'sl_mult': 1.0, 'tp_mult': 2.0}
+
+[bb_squeeze] family=volatility grid=24 points...
+  [REJECT] IS_PF= 1.18 (N=572)  OOS_PF= 0.93 (N=264)  OOS_cost= 0.87  AvgR=-0.045  DD=4.4%  Rob=1.00  (1716s)
+      - OOS cost-adj PF=0.87 < 1.3
+      best params: {'bb_period': 20, 'squeeze_lookback': 80, 'sl_mult': 1.0, 'tp_mult': 2.0}
+
+[nr7] family=volatility grid=12 points...
+  [REJECT] IS_PF= 0.70 (N=21)  OOS_PF= 0.46 (N=3)  OOS_cost= 0.40  AvgR=-0.242  DD=0.3%  Rob=0.42  (169s)
+      - OOS N=3 < 50
+      - OOS cost-adj PF=0.40 < 1.3
+      - Robustness=0.42 < 0.6 (cherry-pick risk)
+      best params: {'lookback': 10, 'sl_atr_mult': 1.0, 'tp_atr_mult': 3.0}
+
+[opening_range] family=volatility grid=16 points...
+  [REJECT] IS_PF= 1.05 (N=1904)  OOS_PF= 0.92 (N=830)  OOS_cost= 0.85  AvgR=-0.055  DD=15.3%  Rob=1.00  (246s)
+      - OOS cost-adj PF=0.85 < 1.3
+      - Max DD=15.3% > 15%
+      best params: {'range_start': 7, 'range_end': 9, 'sl_atr_mult': 1.0, 'tp_atr_mult': 2.0}
+
+[london_open] family=session grid=36 points...
+  [REJECT] IS_PF= 1.36 (N=183)  OOS_PF= 1.08 (N=101)  OOS_cost= 0.99  AvgR=+0.043  DD=2.1%  Rob=0.86  (264s)
+      - OOS cost-adj PF=0.99 < 1.3
+      best params: {'london_hour': 7, 'min_range_atr': 0.7, 'sl_atr_mult': 1.5, 'tp_atr_mult': 3.0}
+
+[gold_am_fix] family=session grid=16 points...
+  [REJECT] IS_PF= 1.06 (N=1583)  OOS_PF= 0.87 (N=698)  OOS_cost= 0.81  AvgR=-0.087  DD=15.2%  Rob=1.00  (223s)
+      - OOS cost-adj PF=0.81 < 1.3
+      - Max DD=15.2% > 15%
+      best params: {'range_start': 10, 'range_end': 12, 'sl_atr_mult': 1.0, 'tp_atr_mult': 2.5}
+
+[ny_london_overlap] family=session grid=24 points...
+  [REJECT] IS_PF= 1.08 (N=1171)  OOS_PF= 0.88 (N=517)  OOS_cost= 0.82  AvgR=-0.091  DD=14.2%  Rob=1.00  (1401s)
+      - OOS cost-adj PF=0.82 < 1.3
+      best params: {'overlap_start': 12, 'momentum_atr': 0.7, 'sl_atr_mult': 0.7, 'tp_atr_mult': 2.0}
+
+[rsi2_connors] family=reversion grid=24 points...
+  [REJECT] IS_PF= 0.32 (N=711)  OOS_PF= 0.25 (N=326)  OOS_cost= 0.22  AvgR=-0.503  DD=32.8%  Rob=1.00  (107s)
+      - OOS cost-adj PF=0.22 < 1.3
+      - Max DD=32.8% > 15%
+      best params: {'oversold': 15, 'trend_ma_period': 100, 'sl_atr_mult': 1.5, 'tp_atr_mult': 1.5}
+
+[bb_reversion] family=reversion grid=24 points...
+  [REJECT] IS_PF= 0.24 (N=391)  OOS_PF= 0.34 (N=173)  OOS_cost= 0.30  AvgR=-0.392  DD=14.1%  Rob=0.71  (105s)
+      - OOS cost-adj PF=0.30 < 1.3
+      best params: {'bb_period': 20, 'bb_std': 1.8, 'sl_atr_mult': 1.5, 'trend_ema_period': 100}
+
+
+========================================================================
+  RESULTS SAVED: C:\Users\hamza\Downloads\Ai projects\Pine script signal bot\validation_harness\..\diagnostic\strategy_battery_results.csv
+========================================================================
+         strategy     family  is_pf  is_n  oos_pf  oos_pf_cost  oos_n  oos_avg_r  oos_max_dd_pct  robustness  grid_size  rejected                                                                           failures                                                                        best_params
+        ema_cross      trend  1.720   158   2.667        2.456     54     0.5556            0.69       0.875         32     False                                                                                             {'fast': 10, 'slow': 50, 'adx_min': 20.0, 'sl_mult': 1.5, 'tp_mult': 2.0}
+    triple_screen      trend  2.589   217   2.086        1.942     93     0.5138            1.11       0.472         36      True                                           Robustness=0.47 < 0.6 (cherry-pick risk)     {'d1_ema_period': 20, 'h4_rsi_long_max': 45.0, 'sl_mult': 1.5, 'tp_mult': 3.0}
+         donchian      trend  1.315   168   1.456        1.255     73     0.1206            0.50       1.000         16      True                                                         OOS cost-adj PF=1.26 < 1.3                                   {'lookback': 20, 'sl_mult': 2.0, 'tp_mult': 3.0}
+          keltner volatility  1.292   372   1.111        1.036    154     0.0714            2.15       1.000         36      True                                                         OOS cost-adj PF=1.04 < 1.3               {'ema_period': 10, 'band_mult': 2.5, 'sl_mult': 1.0, 'tp_mult': 2.0}
+      london_open    session  1.362   183   1.075        0.993    101     0.0433            2.09       0.861         36      True                                                         OOS cost-adj PF=0.99 < 1.3   {'london_hour': 7, 'min_range_atr': 0.7, 'sl_atr_mult': 1.5, 'tp_atr_mult': 3.0}
+       bb_squeeze volatility  1.178   572   0.933        0.870    264    -0.0455            4.37       1.000         24      True                                                         OOS cost-adj PF=0.87 < 1.3          {'bb_period': 20, 'squeeze_lookback': 80, 'sl_mult': 1.0, 'tp_mult': 2.0}
+    opening_range volatility  1.050  1904   0.918        0.855    830    -0.0548           15.35       1.000         16      True                                     OOS cost-adj PF=0.85 < 1.3; Max DD=15.3% > 15%         {'range_start': 7, 'range_end': 9, 'sl_atr_mult': 1.0, 'tp_atr_mult': 2.0}
+ny_london_overlap    session  1.084  1171   0.878        0.823    517    -0.0914           14.19       1.000         24      True                                                         OOS cost-adj PF=0.82 < 1.3 {'overlap_start': 12, 'momentum_atr': 0.7, 'sl_atr_mult': 0.7, 'tp_atr_mult': 2.0}
+      gold_am_fix    session  1.063  1583   0.872        0.813    698    -0.0875           15.23       1.000         16      True                                     OOS cost-adj PF=0.81 < 1.3; Max DD=15.2% > 15%       {'range_start': 10, 'range_end': 12, 'sl_atr_mult': 1.0, 'tp_atr_mult': 2.5}
+              nr7 volatility  0.699    21   0.463        0.400      3    -0.2418            0.27       0.417         12      True OOS N=3 < 50; OOS cost-adj PF=0.40 < 1.3; Robustness=0.42 < 0.6 (cherry-pick risk)                           {'lookback': 10, 'sl_atr_mult': 1.0, 'tp_atr_mult': 3.0}
+     bb_reversion  reversion  0.240   391   0.340        0.299    173    -0.3917           14.12       0.708         24      True                                                         OOS cost-adj PF=0.30 < 1.3      {'bb_period': 20, 'bb_std': 1.8, 'sl_atr_mult': 1.5, 'trend_ema_period': 100}
+     rsi2_connors  reversion  0.318   711   0.245        0.216    326    -0.5028           32.78       1.000         24      True                                     OOS cost-adj PF=0.22 < 1.3; Max DD=32.8% > 15%   {'oversold': 15, 'trend_ma_period': 100, 'sl_atr_mult': 1.5, 'tp_atr_mult': 1.5}
+
+  SURVIVORS (passed all gates): 1/12
+  Top survivor: ema_cross (OOS cost-adj PF=2.456)

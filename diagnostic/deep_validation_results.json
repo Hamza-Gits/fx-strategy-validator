@@ -1,0 +1,135 @@
+[
+  {
+    "strategy": "ema_cross",
+    "params": {
+      "fast": 10,
+      "slow": 50,
+      "adx_min": 20.0,
+      "sl_mult": 1.5,
+      "tp_mult": 2.0
+    },
+    "multi_instrument": [
+      {
+        "symbol": "XAUUSD",
+        "period": "IS",
+        "n": 158,
+        "pf": 1.72,
+        "pf_cost": 1.584,
+        "avg_r": 0.3143,
+        "wr": 56.3
+      },
+      {
+        "symbol": "XAUUSD",
+        "period": "OOS",
+        "n": 54,
+        "pf": 2.667,
+        "pf_cost": 2.456,
+        "avg_r": 0.5556,
+        "wr": 66.7
+      },
+      {
+        "symbol": "EURUSD",
+        "period": "IS",
+        "n": 138,
+        "pf": 1.497,
+        "pf_cost": 1.379,
+        "avg_r": 0.2343,
+        "wr": 52.9
+      },
+      {
+        "symbol": "EURUSD",
+        "period": "OOS",
+        "n": 46,
+        "pf": 2.5,
+        "pf_cost": 2.303,
+        "avg_r": 0.5217,
+        "wr": 65.2
+      },
+      {
+        "symbol": "GBPUSD",
+        "period": "IS",
+        "n": 117,
+        "pf": 2.014,
+        "pf_cost": 1.854,
+        "avg_r": 0.4017,
+        "wr": 59.8
+      },
+      {
+        "symbol": "GBPUSD",
+        "period": "OOS",
+        "n": 53,
+        "pf": 1.879,
+        "pf_cost": 1.73,
+        "avg_r": 0.3648,
+        "wr": 58.5
+      },
+      {
+        "symbol": "USDJPY",
+        "period": "IS",
+        "n": 120,
+        "pf": 2.0,
+        "pf_cost": 1.842,
+        "avg_r": 0.4,
+        "wr": 60.0
+      },
+      {
+        "symbol": "USDJPY",
+        "period": "OOS",
+        "n": 53,
+        "pf": 1.19,
+        "pf_cost": 1.096,
+        "avg_r": 0.1006,
+        "wr": 47.2
+      }
+    ],
+    "regime_split": [
+      {
+        "regime": "bull",
+        "n": 30,
+        "pf": 2.303,
+        "avg_r": 0.4778,
+        "wr": 63.3
+      },
+      {
+        "regime": "bear",
+        "n": 9,
+        "pf": 2.667,
+        "avg_r": 0.5556,
+        "wr": 66.7
+      },
+      {
+        "regime": "range",
+        "n": 9,
+        "pf": 4.667,
+        "avg_r": 0.8148,
+        "wr": 77.8
+      },
+      {
+        "regime": "unknown",
+        "n": 6,
+        "pf": 2.667,
+        "avg_r": 0.5556,
+        "wr": 66.7
+      }
+    ],
+    "monte_carlo": {
+      "n_trades": 54,
+      "cost_adj_pf": 2.456,
+      "final_p05": 51345.0,
+      "final_p50": 52745.0,
+      "final_p95": 53923.0,
+      "max_dd_p50_pct": 0.63,
+      "max_dd_p95_pct": 1.23,
+      "pct_runs_above_start": 99.9
+    },
+    "news_filter": {
+      "n_full": 54,
+      "pf_full": 2.456,
+      "n_filtered": 46,
+      "pf_filtered": 2.095,
+      "pct_news_trades": 14.8
+    },
+    "rejected": false,
+    "failures": []
+  }
+]
