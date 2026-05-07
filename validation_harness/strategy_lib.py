@@ -623,6 +623,481 @@ def bb_reversion(h1: pd.DataFrame, bb_period: int = 20, bb_std: float = 2.0,
     return trades
 
 
+# ─── 13. ARCB-XAU: Asian-Range Compression Breakout ──────────────────────────
+
+def _simulate_arcb_trade(h1: pd.DataFrame, entry_idx: int, direction: int,
+                          entry_price: float, initial_stop: float, tp1: float,
+                          trail_ema_len: int, hard_close_utc: int,
+                          h1_atr_at_entry: float,
+                          ema21: pd.Series) -> Optional[Trade]:
+    """
+    Multi-stage trade management for ARCB-XAU:
+      Phase 1: standard SL / TP1 management
+      Phase 2 (after TP1 hit): move stop to break-even, trail to 21-EMA
+      Hard close: exit at close of first bar with hour >= hard_close_utc (same session)
+    """
+    if entry_idx >= len(h1) - 1:
+        return None
+    stop_dist = abs(entry_price - initial_stop)
+    if stop_dist <= 0:
+        return None
+
+    current_stop = initial_stop
+    tp1_hit      = False
+    entry_time   = h1.index[entry_idx]
+
+    for i in range(entry_idx + 1, len(h1)):
+        bar = h1.iloc[i]
+        ts  = h1.index[i]
+
+        # Hard daily close — exit at this bar's close (same calendar date as entry)
+        if ts.date() == entry_time.date() and ts.hour >= hard_close_utc:
+            exit_p = bar['close']
+            pnl    = direction * (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+            return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - entry_idx)
+
+        # If we roll to next day without hitting hard-close (shouldn't happen in practice)
+        if ts.date() > entry_time.date():
+            exit_p = bar['open']
+            pnl    = direction * (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+            return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - entry_idx)
+
+        if direction == 1:  # LONG
+            # Stop hit (check before TP to be conservative)
+            if bar['low'] <= current_stop:
+                exit_p = current_stop
+                pnl    = (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+                return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - entry_idx)
+            # TP1 hit → move to break-even
+            if not tp1_hit and bar['high'] >= tp1:
+                tp1_hit      = True
+                current_stop = entry_price   # break-even
+            # Trail phase: update stop to EMA-based trail
+            if tp1_hit and ts in ema21.index:
+                trail_level = ema21.loc[ts] - 0.3 * h1_atr_at_entry
+                current_stop = max(current_stop, trail_level)
+
+        else:  # SHORT
+            if bar['high'] >= current_stop:
+                exit_p = current_stop
+                pnl    = (entry_price - exit_p) / stop_dist * NOTIONAL_RISK
+                return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - entry_idx)
+            if not tp1_hit and bar['low'] <= tp1:
+                tp1_hit      = True
+                current_stop = entry_price
+            if tp1_hit and ts in ema21.index:
+                trail_level = ema21.loc[ts] + 0.3 * h1_atr_at_entry
+                current_stop = min(current_stop, trail_level)
+
+    # End of data reached — exit at last bar close
+    exit_p = h1.iloc[-1]['close']
+    pnl    = direction * (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+    return Trade(entry_time, h1.index[-1], direction, entry_price, exit_p, pnl,
+                 len(h1) - 1 - entry_idx)
+
+
+def arcb_xau(h1: pd.DataFrame,
+             compression_k:    float = 0.70,
+             stop_atr_mult:    float = 1.20,
+             vol_ratio_min:    float = 1.30,
+             atr_period_h1:    int   = 14,
+             atr_period_d1:    int   = 20,
+             atr_floor_pct:    float = 0.004,
+             body_ratio_min:   float = 0.50,
+             stop_floor_frac:  float = 0.50,
+             trail_ema_len:    int   = 21,
+             asia_start_hour:  int   = 0,   # broker time: 0 = midnight (22:00 UTC GMT+2)
+             asia_end_hour:    int   = 7,   # broker time: 7 = 05:00 UTC
+             entry_start_hour: int   = 9,   # broker time: 9 = 07:00 UTC
+             entry_end_hour:   int   = 15,  # broker time: 15 = 13:00 UTC
+             hard_close_hour:  int   = 23,  # broker time: 23 = 21:00 UTC
+             jan_block_days:   int   = 5) -> list:
+    """
+    ARCB-XAU v1.0 — Asian-Range Compression Breakout into London/COMEX.
+
+    Structural mechanism (Batten et al. 2017; Caporin/Ranaldo 2015):
+      During 22:00-05:00 UTC, real-money flow is largely absent and price builds
+      a tight Asian balance. When LBMA and COMEX engage (07:00-13:00 UTC),
+      stop liquidity accumulated at Asian range boundaries is released, driving
+      directional expansion. Compressed Asian sessions = higher-probability breaks.
+
+    Entry conditions (all must hold):
+      - Asian range <= compression_k * D1 ATR(20)       [compression filter]
+      - D1 ATR >= atr_floor_pct * price                 [vol floor]
+      - H1 bar close outside Asian range                 [breakout]
+      - Bar body >= body_ratio_min * bar range           [conviction]
+      - Tick volume >= vol_ratio_min * 20-bar mean       [participation]
+      - Entry hour in [entry_start_hour, entry_end_hour] [session gate]
+      - Not in first jan_block_days of January           [BCOM rebalance block]
+
+    Hour parameters are in BROKER time (GMT+2 default for most MT5 brokers):
+      - asia_start_hour=0, asia_end_hour=7   → 22:00-05:00 UTC
+      - entry_start_hour=9, entry_end_hour=15 → 07:00-13:00 UTC
+      - hard_close_hour=23                   → 21:00 UTC
+
+    Exit logic:
+      - Initial SL: max(stop_atr_mult * H1 ATR, stop_floor_frac * Asian range)
+      - TP1: 1.0 * Asian range size
+      - After TP1: move stop to break-even, trail to 21-EMA - 0.3*ATR
+      - Hard close: bar close at hard_close_hour broker time (intraday)
+    """
+    h1 = h1.copy()
+
+    # ── Pre-compute D1 data ────────────────────────────────────────────────
+    d1 = resample_higher(h1, '1D')
+    d1['atr_d1'] = atr(d1, atr_period_d1)
+    # Forward-fill D1 ATR onto H1 index
+    h1['d1_atr'] = d1['atr_d1'].reindex(h1.index, method='ffill')
+
+    # ── Pre-compute H1 ATR and 21-EMA ─────────────────────────────────────
+    h1['atr_h1'] = atr(h1, atr_period_h1)
+    ema21        = ema(h1['close'], trail_ema_len)  # used for trailing stop
+
+    # ── Pre-compute 20-bar tick volume mean (rolling) ─────────────────────
+    h1['vol_mean20'] = h1['volume'].rolling(20, min_periods=10).mean()
+
+    h1 = h1.dropna(subset=['d1_atr', 'atr_h1', 'vol_mean20'])
+    h1['hour'] = h1.index.hour
+    h1['date'] = h1.index.date
+
+    # ── Pre-compute all per-date lookups ONCE (eliminates repeated full scans) ──
+    # Asian ranges by date
+    if asia_start_hour <= asia_end_hour:
+        asia_mask = (h1['hour'] >= asia_start_hour) & (h1['hour'] <= asia_end_hour)
+    else:
+        asia_mask = (h1['hour'] >= asia_start_hour) | (h1['hour'] <= asia_end_hour)
+    asia_grp = h1[asia_mask].groupby('date')
+    asia_ranges = asia_grp.agg(high=('high', 'max'), low=('low', 'min'),
+                                count=('close', 'count'))
+
+    # D1 ATR per date (first bar of each date)
+    d1_atr_by_date = h1.groupby('date')['d1_atr'].first().to_dict()
+
+    # Entry bars pre-grouped by date
+    entry_mask = (h1['hour'] >= entry_start_hour) & (h1['hour'] <= entry_end_hour)
+    entry_by_date = {d: g for d, g in h1[entry_mask].groupby('date')}
+
+    # January block dates pre-computed as a set
+    jan_blocked: set = set()
+    if jan_block_days > 0:
+        for yr in h1.index.year.unique():
+            jan_dates = sorted(h1[(h1.index.year == yr) & (h1.index.month == 1)
+                                  ]['date'].unique())
+            for d in jan_dates[:jan_block_days]:
+                jan_blocked.add(d)
+
+    # Build integer-position index for fast simulation lookup
+    h1_index_arr = h1.index
+
+    trades = []
+
+    for cur_date, asia_row in asia_ranges.iterrows():
+        if asia_row['count'] < 5:
+            continue
+
+        asia_high = asia_row['high']
+        asia_low  = asia_row['low']
+        asia_size = asia_high - asia_low
+
+        # D1 ATR filter
+        d1_atr_val = d1_atr_by_date.get(cur_date, np.nan)
+        if np.isnan(d1_atr_val) or d1_atr_val <= 0:
+            continue
+        if asia_size > compression_k * d1_atr_val:
+            continue
+
+        # Entry bars for this date
+        entry_bars = entry_by_date.get(cur_date)
+        if entry_bars is None or entry_bars.empty:
+            continue
+
+        long_done  = False
+        short_done = False
+
+        for ts, bar_row in entry_bars.iterrows():
+            if long_done and short_done:
+                break
+
+            if cur_date in jan_blocked:
+                break
+
+            # ATR floor
+            if bar_row['d1_atr'] < atr_floor_pct * bar_row['close']:
+                continue
+
+            # Bar quality filters
+            bar_range = bar_row['high'] - bar_row['low']
+            if bar_range <= 0:
+                continue
+            body_ratio = abs(bar_row['close'] - bar_row['open']) / bar_range
+            if body_ratio < body_ratio_min:
+                continue
+
+            vol_mean = bar_row['vol_mean20']
+            if vol_mean <= 0 or bar_row['volume'] < vol_ratio_min * vol_mean:
+                continue
+
+            h1_atr_val = bar_row['atr_h1']
+            if np.isnan(h1_atr_val) or h1_atr_val <= 0:
+                continue
+
+            h1_idx = h1_index_arr.get_loc(ts)
+
+            # ── LONG: close above Asian high ──────────────────────────────
+            if not long_done and bar_row['close'] > asia_high and \
+                    bar_row['close'] > bar_row['open']:
+                stop_dist = max(stop_atr_mult * h1_atr_val,
+                                stop_floor_frac * asia_size)
+                t = _simulate_arcb_trade(
+                    h1, h1_idx, 1, bar_row['close'],
+                    bar_row['close'] - stop_dist,
+                    bar_row['close'] + asia_size,
+                    trail_ema_len, hard_close_hour, h1_atr_val, ema21)
+                if t:
+                    trades.append(t)
+                    long_done = True
+
+            # ── SHORT: close below Asian low ──────────────────────────────
+            elif not short_done and bar_row['close'] < asia_low and \
+                    bar_row['close'] < bar_row['open']:
+                stop_dist = max(stop_atr_mult * h1_atr_val,
+                                stop_floor_frac * asia_size)
+                t = _simulate_arcb_trade(
+                    h1, h1_idx, -1, bar_row['close'],
+                    bar_row['close'] + stop_dist,
+                    bar_row['close'] - asia_size,
+                    trail_ema_len, hard_close_hour, h1_atr_val, ema21)
+                if t:
+                    trades.append(t)
+                    short_done = True
+
+    return trades
+
+
+# ─── 14. NDCB-XAU: NY Data-Hour Compression Breakout ─────────────────────────
+
+def _simulate_ndcb_trade(h1: pd.DataFrame, start_idx: int, direction: int,
+                          entry_price: float, sl: float, tp_r2: float,
+                          hard_close_hour: int, h1_atr: float,
+                          trail_trigger_r: float, trail_atr_mult: float,
+                          ema21: pd.Series) -> Optional[Trade]:
+    """
+    NDCB trade simulation. Entry is a pending stop that already filled at entry_price.
+    Phase 1: manage SL + 2R target.
+    Phase 2 (after trail_trigger_r hit): trail stop at trail_atr_mult×ATR from price.
+    Hard close at hard_close_hour broker time same day.
+    """
+    stop_dist = abs(entry_price - sl)
+    if stop_dist <= 0:
+        return None
+    entry_time   = h1.index[start_idx]
+    current_stop = sl
+    trail_active = False
+
+    for i in range(start_idx + 1, len(h1)):
+        bar = h1.iloc[i]
+        ts  = h1.index[i]
+
+        # Hard close — same calendar date, hour >= hard_close_hour
+        if ts.date() == entry_time.date() and ts.hour >= hard_close_hour:
+            exit_p = bar['close']
+            pnl    = direction * (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+            return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
+
+        if ts.date() > entry_time.date():
+            exit_p = bar['open']
+            pnl    = direction * (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+            return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
+
+        if direction == 1:
+            if bar['low'] <= current_stop:
+                exit_p = current_stop
+                pnl    = (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+                return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
+            if bar['high'] >= tp_r2:
+                exit_p = tp_r2
+                pnl    = (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+                return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
+            # Check trail trigger (1.5R hit)
+            trail_level_price = entry_price + trail_trigger_r * stop_dist
+            if not trail_active and bar['high'] >= trail_level_price:
+                trail_active = True
+            if trail_active:
+                new_stop = bar['close'] - trail_atr_mult * h1_atr
+                current_stop = max(current_stop, new_stop)
+        else:
+            if bar['high'] >= current_stop:
+                exit_p = current_stop
+                pnl    = (entry_price - exit_p) / stop_dist * NOTIONAL_RISK
+                return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
+            if bar['low'] <= tp_r2:
+                exit_p = tp_r2
+                pnl    = (entry_price - exit_p) / stop_dist * NOTIONAL_RISK
+                return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
+            trail_level_price = entry_price - trail_trigger_r * stop_dist
+            if not trail_active and bar['low'] <= trail_level_price:
+                trail_active = True
+            if trail_active:
+                new_stop = bar['close'] + trail_atr_mult * h1_atr
+                current_stop = min(current_stop, new_stop)
+
+    exit_p = h1.iloc[-1]['close']
+    pnl    = direction * (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+    return Trade(entry_time, h1.index[-1], direction, entry_price, exit_p, pnl,
+                 len(h1) - 1 - start_idx)
+
+
+def ndcb_xau(h1: pd.DataFrame,
+             compression_ratio:  float = 0.60,
+             entry_buffer_atr:   float = 0.20,
+             stop_atr_mult:      float = 1.00,
+             atr_period:         int   = 14,
+             tp_r:               float = 2.00,
+             trail_trigger_r:    float = 1.50,
+             trail_atr_mult:     float = 1.00,
+             comp_start_hour:    int   = 11,
+             comp_end_hour:      int   = 14,
+             entry_hour:         int   = 15,
+             trade_window_end:   int   = 18,
+             hard_close_hour:    int   = 21,
+             regime_days:        int   = 5,
+             regime_mult:        float = 1.50,
+             regime_atr_period:  int   = 63,
+             vol_ratio_period:   int   = 20) -> list:
+    """
+    NDCB-XAU v1.0 — NY Data-Hour Compression Breakout.
+
+    Structural mechanism (Hammoudeh et al. 2024; CME microstructure):
+      The 13:30 UTC bar (broker hour 15, GMT+2) is the highest-sigma timestamp
+      of the trading week — NFP, CPI, claims, FOMC all land at 13:30 ET.
+      When the pre-NY window (09:00-13:00 UTC = broker 11:00-15:00) compresses
+      below its rolling average, the 13:30 UTC release produces an explosive
+      directional expansion as pre-positioned stops and option hedges unwind.
+
+    Unlike ARCB-XAU:
+      - Compression is SELF-REFERENTIAL (range vs its own rolling median) — fixes
+        the trivial-filter flaw. Only fires ~40-60% of days, not 92%.
+      - Entry is a PENDING STOP ORDER at compression boundary + buffer — captures
+        the move only after the break is confirmed.
+      - R:R is 2:1 minimum — structurally sound vs ARCB's 0.67:1.
+      - Direction filter via regime check — prevents trading into already-explosive days.
+
+    Hours in broker time (GMT+2):
+      comp window: 11:00-14:00 → 09:00-12:00 UTC
+      entry:       15:00       → 13:00 UTC  (13:30 data release bar)
+      trade ends:  18:00       → 16:00 UTC
+      hard close:  21:00       → 19:00 UTC
+    """
+    h1 = h1.copy()
+
+    # ── Pre-compute indicators ─────────────────────────────────────────────
+    h1['atr_h1']  = atr(h1, atr_period)
+    h1['atr_63']  = atr(h1, regime_atr_period)
+    h1['range_d'] = h1['high'] - h1['low']
+    ema21         = ema(h1['close'], 21)
+    h1['hour']    = h1.index.hour
+    h1['date']    = h1.index.date
+
+    h1 = h1.dropna(subset=['atr_h1', 'atr_63'])
+
+    # ── Pre-compute compression window range per date ──────────────────────
+    comp_mask = (h1['hour'] >= comp_start_hour) & (h1['hour'] <= comp_end_hour)
+    comp_grp  = h1[comp_mask].groupby('date')
+    comp_stats = comp_grp.agg(
+        comp_high=('high', 'max'),
+        comp_low=('low',  'min'),
+        comp_n=('close', 'count'),
+        atr_at_comp=('atr_h1', 'last'),
+    )
+    comp_stats['comp_range'] = comp_stats['comp_high'] - comp_stats['comp_low']
+    # Rolling median of compression window range (self-referential filter)
+    comp_stats['comp_range_median'] = (
+        comp_stats['comp_range'].rolling(vol_ratio_period, min_periods=10).median()
+    )
+
+    # ── Pre-compute regime filter: D1 range vs D1 ATR(63) ────────────────
+    # Use actual daily range (max high - min low), not sum of H1 bar ranges
+    d1_by_date = h1.groupby('date').agg(d_high=('high', 'max'), d_low=('low', 'min'))
+    d1_by_date['d1_range'] = d1_by_date['d_high'] - d1_by_date['d_low']
+    d1_range_rolling  = d1_by_date['d1_range'].rolling(regime_days).mean()
+    d1_atr63_by_date  = d1_by_date['d1_range'].rolling(regime_atr_period).mean()
+
+    # ── Pre-group trade window bars by date ───────────────────────────────
+    trade_mask     = (h1['hour'] >= entry_hour) & (h1['hour'] <= trade_window_end)
+    trade_by_date  = {d: g for d, g in h1[trade_mask].groupby('date')}
+
+    h1_index_arr = h1.index
+    trades = []
+
+    for cur_date, comp_row in comp_stats.iterrows():
+        # Need enough compression bars
+        if comp_row['comp_n'] < 3:
+            continue
+
+        comp_range  = comp_row['comp_range']
+        comp_median = comp_row['comp_range_median']
+        if np.isnan(comp_median) or comp_median <= 0:
+            continue
+
+        # ── Compression filter (self-referential) ─────────────────────────
+        if comp_range >= compression_ratio * comp_median:
+            continue   # not compressed enough
+
+        # ── Regime filter: skip already-explosive days ────────────────────
+        if cur_date in d1_range_rolling.index and cur_date in d1_atr63_by_date.index:
+            avg_range_5d = d1_range_rolling.loc[cur_date]
+            atr_63_val   = d1_atr63_by_date.loc[cur_date]
+            if not np.isnan(avg_range_5d) and not np.isnan(atr_63_val) and atr_63_val > 0:
+                if avg_range_5d > regime_mult * atr_63_val:
+                    continue   # already explosive regime
+
+        # ── Pending stop levels ───────────────────────────────────────────
+        h1_atr = comp_row['atr_at_comp']
+        if np.isnan(h1_atr) or h1_atr <= 0:
+            continue
+
+        pending_buy  = comp_row['comp_high'] + entry_buffer_atr * h1_atr
+        pending_sell = comp_row['comp_low']  - entry_buffer_atr * h1_atr
+
+        # ── Scan trade window for first pending-stop trigger ──────────────
+        trade_bars = trade_by_date.get(cur_date)
+        if trade_bars is None or trade_bars.empty:
+            continue
+
+        triggered = False
+        for ts, bar in trade_bars.iterrows():
+            if triggered:
+                break
+
+            h1_idx = h1_index_arr.get_loc(ts)
+
+            # Long trigger
+            if bar['high'] >= pending_buy:
+                entry_p   = pending_buy
+                sl        = entry_p - stop_atr_mult * h1_atr
+                tp        = entry_p + tp_r * stop_atr_mult * h1_atr
+                t = _simulate_ndcb_trade(
+                    h1, h1_idx, 1, entry_p, sl, tp,
+                    hard_close_hour, h1_atr, trail_trigger_r, trail_atr_mult, ema21)
+                if t:
+                    trades.append(t)
+                    triggered = True
+
+            # Short trigger (only if long hasn't fired)
+            elif bar['low'] <= pending_sell:
+                entry_p   = pending_sell
+                sl        = entry_p + stop_atr_mult * h1_atr
+                tp        = entry_p - tp_r * stop_atr_mult * h1_atr
+                t = _simulate_ndcb_trade(
+                    h1, h1_idx, -1, entry_p, sl, tp,
+                    hard_close_hour, h1_atr, trail_trigger_r, trail_atr_mult, ema21)
+                if t:
+                    trades.append(t)
+                    triggered = True
+
+    return trades
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 #                          STRATEGY REGISTRY
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -640,6 +1115,9 @@ STRATEGIES: dict = {
     'ny_london_overlap':  {'fn': ny_london_overlap,     'family': 'session'},
     'rsi2_connors':       {'fn': rsi2_connors,          'family': 'reversion'},
     'bb_reversion':       {'fn': bb_reversion,          'family': 'reversion'},
+    # ── New: Research-grounded session strategies ──────────────────────────
+    'arcb_xau':           {'fn': arcb_xau,              'family': 'session'},
+    'ndcb_xau':           {'fn': ndcb_xau,              'family': 'session'},
 }
 
 
