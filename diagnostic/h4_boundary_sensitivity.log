@@ -1,0 +1,24 @@
+==============================================================================
+  H4 BOUNDARY SENSITIVITY — ema_cross_adx (XAUUSD 2014-2024)
+  Tests 4 offsets (0,1,2,3hr). If PF varies > 0.5, bin-specific overfit.
+==============================================================================
+
+  IS:  2014-01-02 → 2021-09-20  (45333 bars)
+  OOS: 2021-09-20 → 2024-12-31  (19429 bars)
+
+ offset_h period   n    pf  pf_cost  avg_r   wr
+        0     IS 158 1.720    1.584 0.3143 56.3
+        0    OOS  54 2.667    2.456 0.5556 66.7
+        1     IS 155 1.619    1.491 0.2796 54.8
+        1    OOS  57 2.121    1.954 0.4327 61.4
+        2     IS 164 1.333    1.228 0.1667 50.0
+        2    OOS  62 1.973    1.817 0.3925 59.7
+        3     IS 166 1.333    1.228 0.1667 50.0
+        3    OOS  62 2.261    2.082 0.4677 62.9
+
+  OOS cost-adj PF range: 1.82 → 2.46  (spread=0.64)
+  OOS N range:           54 → 62
+  VERDICT: BIN-SPECIFIC — strategy depends on H4 anchor. PF varies by 0.64.
+           Original PF 2.46 may not survive on broker-aligned H4.
+
+  Saved: C:\Users\hamza\Downloads\Ai projects\Pine script signal bot\validation_harness\..\diagnostic\h4_boundary_sensitivity.csv

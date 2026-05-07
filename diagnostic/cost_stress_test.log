@@ -1,0 +1,15 @@
+========================================================================
+  COST STRESS TEST — XAUUSD ema_cross OOS (2021-2024)
+  Raw OOS: N=54  PF=2.667  AvgR=0.556
+========================================================================
+ spread_c  cost_R    pf  avg_r  pos_trades  neg_trades  wr_pct
+       60  0.0473 2.456 0.5083          36          18    66.7
+       80  0.0564 2.418 0.4992          36          18    66.7
+      100  0.0655 2.380 0.4901          36          18    66.7
+      120  0.0745 2.343 0.4810          36          18    66.7
+      150  0.0882 2.288 0.4674          36          18    66.7
+      200  0.1109 2.201 0.4446          36          18    66.7
+
+  VERDICT: ROBUST — PF 2.38 at 100c spread.
+
+  Saved: C:\Users\hamza\Downloads\Ai projects\Pine script signal bot\validation_harness\..\diagnostic\cost_stress_test.csv
