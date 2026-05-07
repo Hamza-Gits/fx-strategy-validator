@@ -880,12 +880,20 @@ def _simulate_ndcb_trade(h1: pd.DataFrame, start_idx: int, direction: int,
                           entry_price: float, sl: float, tp_r2: float,
                           hard_close_hour: int, h1_atr: float,
                           trail_trigger_r: float, trail_atr_mult: float,
-                          ema21: pd.Series) -> Optional[Trade]:
+                          ema21: pd.Series,
+                          partial_close_r: float = 0.0,
+                          partial_frac: float    = 0.50,
+                          tp_runner: float       = 0.0) -> Optional[Trade]:
     """
     NDCB trade simulation. Entry is a pending stop that already filled at entry_price.
-    Phase 1: manage SL + 2R target.
+    Phase 1: manage SL + tp_r2 target.
     Phase 2 (after trail_trigger_r hit): trail stop at trail_atr_mult×ATR from price.
     Hard close at hard_close_hour broker time same day.
+
+    Partial close (if partial_close_r > 0):
+      When price moves partial_close_r × stop_dist in our favour, close partial_frac
+      of the position and move SL to breakeven. The remaining (1-partial_frac) runs to
+      tp_runner × stop_dist. Combined PnL is returned as a single Trade.
     """
     stop_dist = abs(entry_price - sl)
     if stop_dist <= 0:
@@ -894,31 +902,57 @@ def _simulate_ndcb_trade(h1: pd.DataFrame, start_idx: int, direction: int,
     current_stop = sl
     trail_active = False
 
+    # Partial-close state
+    partial_done    = False
+    partial_pnl     = 0.0
+    use_partial     = partial_close_r > 0
+    runner_tp       = (entry_price + direction * tp_runner * stop_dist) if use_partial else None
+    partial_level   = (entry_price + direction * partial_close_r * stop_dist) if use_partial else None
+
+    def _pnl(exit_p: float, frac: float = 1.0) -> float:
+        return direction * (exit_p - entry_price) / stop_dist * NOTIONAL_RISK * frac
+
     for i in range(start_idx + 1, len(h1)):
         bar = h1.iloc[i]
         ts  = h1.index[i]
 
-        # Hard close — same calendar date, hour >= hard_close_hour
+        # ── Partial close trigger ────────────────────────────────────────────
+        if use_partial and not partial_done:
+            triggered = (direction == 1 and bar['high'] >= partial_level) or \
+                        (direction == -1 and bar['low'] <= partial_level)
+            if triggered:
+                partial_pnl  = _pnl(partial_level, partial_frac)
+                partial_done = True
+                # Move SL to breakeven for the runner
+                current_stop = entry_price
+
+        # ── Hard close — same calendar date, hour >= hard_close_hour ─────────
         if ts.date() == entry_time.date() and ts.hour >= hard_close_hour:
-            exit_p = bar['close']
-            pnl    = direction * (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+            exit_p   = bar['close']
+            run_frac = (1.0 - partial_frac) if partial_done else 1.0
+            pnl      = partial_pnl + _pnl(exit_p, run_frac)
             return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
 
         if ts.date() > entry_time.date():
-            exit_p = bar['open']
-            pnl    = direction * (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+            exit_p   = bar['open']
+            run_frac = (1.0 - partial_frac) if partial_done else 1.0
+            pnl      = partial_pnl + _pnl(exit_p, run_frac)
             return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
 
         if direction == 1:
             if bar['low'] <= current_stop:
-                exit_p = current_stop
-                pnl    = (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+                exit_p   = current_stop
+                run_frac = (1.0 - partial_frac) if partial_done else 1.0
+                pnl      = partial_pnl + _pnl(exit_p, run_frac)
                 return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
-            if bar['high'] >= tp_r2:
-                exit_p = tp_r2
-                pnl    = (exit_p - entry_price) / stop_dist * NOTIONAL_RISK
+            # Runner TP (when partial close active) or full TP
+            tp_target = runner_tp if (partial_done and use_partial) else tp_r2
+            if bar['high'] >= tp_target:
+                exit_p   = tp_target
+                run_frac = (1.0 - partial_frac) if partial_done else 1.0
+                pnl      = partial_pnl + _pnl(exit_p, run_frac)
                 return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
-            # Check trail trigger (1.5R hit)
+            # Check trail trigger
             trail_level_price = entry_price + trail_trigger_r * stop_dist
             if not trail_active and bar['high'] >= trail_level_price:
                 trail_active = True
@@ -927,12 +961,15 @@ def _simulate_ndcb_trade(h1: pd.DataFrame, start_idx: int, direction: int,
                 current_stop = max(current_stop, new_stop)
         else:
             if bar['high'] >= current_stop:
-                exit_p = current_stop
-                pnl    = (entry_price - exit_p) / stop_dist * NOTIONAL_RISK
+                exit_p   = current_stop
+                run_frac = (1.0 - partial_frac) if partial_done else 1.0
+                pnl      = partial_pnl + _pnl(exit_p, run_frac)
                 return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
-            if bar['low'] <= tp_r2:
-                exit_p = tp_r2
-                pnl    = (entry_price - exit_p) / stop_dist * NOTIONAL_RISK
+            tp_target = runner_tp if (partial_done and use_partial) else tp_r2
+            if bar['low'] <= tp_target:
+                exit_p   = tp_target
+                run_frac = (1.0 - partial_frac) if partial_done else 1.0
+                pnl      = partial_pnl + _pnl(exit_p, run_frac)
                 return Trade(entry_time, ts, direction, entry_price, exit_p, pnl, i - start_idx)
             trail_level_price = entry_price - trail_trigger_r * stop_dist
             if not trail_active and bar['low'] <= trail_level_price:
@@ -963,7 +1000,15 @@ def ndcb_xau(h1: pd.DataFrame,
              regime_days:        int   = 5,
              regime_mult:        float = 1.50,
              regime_atr_period:  int   = 63,
-             vol_ratio_period:   int   = 20) -> list:
+             vol_ratio_period:   int   = 20,
+             # ── v2 improvements ───────────────────────────────────────────
+             direction_filter:   bool  = False,  # D1 EMA-50 trend filter
+             ema50_period:       int   = 50,
+             partial_close_r:    float = 0.0,    # close partial_frac at this R (0 = off)
+             partial_frac:       float = 0.50,   # fraction closed early
+             tp_runner_r:        float = 3.00,   # TP for runner (when partial_close active)
+             min_atr_dollars:    float = 0.0,    # skip if ATR < this $ (0 = off)
+             ) -> list:
     """
     NDCB-XAU v1.0 — NY Data-Hour Compression Breakout.
 
@@ -999,6 +1044,12 @@ def ndcb_xau(h1: pd.DataFrame,
     h1['date']    = h1.index.date
 
     h1 = h1.dropna(subset=['atr_h1', 'atr_63'])
+
+    # ── D1 EMA-50 direction filter ─────────────────────────────────────────
+    d1_ema50 = None
+    if direction_filter:
+        d1_close = h1.groupby('date')['close'].last()
+        d1_ema50 = ema(d1_close, ema50_period)
 
     # ── Pre-compute compression window range per date ──────────────────────
     comp_mask = (h1['hour'] >= comp_start_hour) & (h1['hour'] <= comp_end_hour)
@@ -1056,8 +1107,27 @@ def ndcb_xau(h1: pd.DataFrame,
         if np.isnan(h1_atr) or h1_atr <= 0:
             continue
 
+        # Min ATR floor (skip ultra-low-vol periods)
+        if min_atr_dollars > 0 and h1_atr < min_atr_dollars:
+            continue
+
         pending_buy  = comp_row['comp_high'] + entry_buffer_atr * h1_atr
         pending_sell = comp_row['comp_low']  - entry_buffer_atr * h1_atr
+
+        # ── Direction filter: D1 EMA-50 ───────────────────────────────────
+        allow_long  = True
+        allow_short = True
+        if direction_filter and d1_ema50 is not None and cur_date in d1_ema50.index:
+            ema50_val = d1_ema50.loc[cur_date]
+            if not np.isnan(ema50_val):
+                mid_price   = (comp_row['comp_high'] + comp_row['comp_low']) / 2
+                allow_long  = mid_price >= ema50_val   # only longs in uptrend
+                allow_short = mid_price < ema50_val    # only shorts in downtrend
+
+        # ── TP calculation ────────────────────────────────────────────────
+        # When partial close active: full_tp not used; runner_tp drives the exit
+        tp_full = tp_r * stop_atr_mult * h1_atr       # used when no partial close
+        runner  = tp_runner_r * stop_atr_mult * h1_atr  # runner TP (when partial active)
 
         # ── Scan trade window for first pending-stop trigger ──────────────
         trade_bars = trade_by_date.get(cur_date)
@@ -1072,25 +1142,31 @@ def ndcb_xau(h1: pd.DataFrame,
             h1_idx = h1_index_arr.get_loc(ts)
 
             # Long trigger
-            if bar['high'] >= pending_buy:
+            if allow_long and bar['high'] >= pending_buy:
                 entry_p   = pending_buy
-                sl        = entry_p - stop_atr_mult * h1_atr
-                tp        = entry_p + tp_r * stop_atr_mult * h1_atr
+                sl_p      = entry_p - stop_atr_mult * h1_atr
+                tp_p      = entry_p + tp_full
                 t = _simulate_ndcb_trade(
-                    h1, h1_idx, 1, entry_p, sl, tp,
-                    hard_close_hour, h1_atr, trail_trigger_r, trail_atr_mult, ema21)
+                    h1, h1_idx, 1, entry_p, sl_p, tp_p,
+                    hard_close_hour, h1_atr, trail_trigger_r, trail_atr_mult, ema21,
+                    partial_close_r=partial_close_r,
+                    partial_frac=partial_frac,
+                    tp_runner=tp_runner_r)
                 if t:
                     trades.append(t)
                     triggered = True
 
             # Short trigger (only if long hasn't fired)
-            elif bar['low'] <= pending_sell:
+            elif allow_short and bar['low'] <= pending_sell:
                 entry_p   = pending_sell
-                sl        = entry_p + stop_atr_mult * h1_atr
-                tp        = entry_p - tp_r * stop_atr_mult * h1_atr
+                sl_p      = entry_p + stop_atr_mult * h1_atr
+                tp_p      = entry_p - tp_full
                 t = _simulate_ndcb_trade(
-                    h1, h1_idx, -1, entry_p, sl, tp,
-                    hard_close_hour, h1_atr, trail_trigger_r, trail_atr_mult, ema21)
+                    h1, h1_idx, -1, entry_p, sl_p, tp_p,
+                    hard_close_hour, h1_atr, trail_trigger_r, trail_atr_mult, ema21,
+                    partial_close_r=partial_close_r,
+                    partial_frac=partial_frac,
+                    tp_runner=tp_runner_r)
                 if t:
                     trades.append(t)
                     triggered = True
